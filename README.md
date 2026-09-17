@@ -6,6 +6,8 @@
 
 Um teste de velocidade de digitação rápido e sem dependências: escolha a dificuldade e o modo, digite o trecho exibido na tela e acompanhe WPM, precisão e tempo em tempo real. Seu recorde pessoal fica salvo no navegador entre uma sessão e outra.
 
+🔗 **[Ver o site publicado](https://camarottomd.github.io/typing-speed-test/)**
+
 ![Preview do Typing Speed Test](./screenshot.png)
 
 ## Sumário

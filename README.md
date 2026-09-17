@@ -12,7 +12,7 @@ Teste de velocidade de digitação construído em HTML, CSS e JavaScript puros. 
 - [x] Motor do teste de digitação (captura de teclas, marcação de acertos/erros, cursor)
 - [x] Cronômetro e cálculo de WPM/precisão em tempo real
 - [x] Tela de resultados e reinício do teste
-- [ ] Recorde pessoal persistente (`localStorage`) e animação de confete
+- [x] Recorde pessoal persistente (`localStorage`) e animação de confete
 
 ## Tecnologias
 

@@ -372,11 +372,50 @@ button {
 }
 
 .results-screen {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
   padding-top: 3rem;
+  overflow: hidden;
+}
+
+.results-decoration {
+  position: absolute;
+  pointer-events: none;
+}
+
+.results-decoration-star-1 {
+  top: 1.5rem;
+  left: 0.5rem;
+  width: 48px;
+  height: 48px;
+}
+
+.results-decoration-star-2 {
+  bottom: 5rem;
+  right: 1rem;
+  width: 24px;
+  height: 24px;
+}
+
+/* O confete só aparece quando um recorde pessoal é batido */
+.results-decoration-confetti {
+  display: none;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: auto;
+}
+
+.results-screen.is-high-score .results-decoration-confetti {
+  display: block;
+}
+
+.results-screen.is-high-score .results-decoration-star-1,
+.results-screen.is-high-score .results-decoration-star-2 {
+  display: none;
 }
 
 .results-title {

@@ -110,9 +110,16 @@
 
       </section>
 
-      <!-- Tela de resultados: exibida ao final do teste, oculta por padrão -->
+      <!-- Tela de resultados: exibida ao final do teste, oculta por padrão.
+           As decorações (estrelas/confete) são só visuais — aria-hidden. -->
       <section class="results-screen" id="results-screen" hidden>
-        <img src="./assets/images/icon-completed.svg" alt="" width="64" height="64" class="results-icon">
+        <!-- pattern-star-2.svg é o asterisco vermelho, pattern-star-1.svg é o brilho amarelo
+             (nomes dos arquivos não correspondem à posição no mockup) -->
+        <img src="./assets/images/pattern-star-2.svg" alt="" aria-hidden="true" class="results-decoration results-decoration-star-1">
+        <img src="./assets/images/pattern-star-1.svg" alt="" aria-hidden="true" class="results-decoration results-decoration-star-2">
+        <img src="./assets/images/pattern-confetti.svg" alt="" aria-hidden="true" class="results-decoration results-decoration-confetti">
+
+        <img src="./assets/images/icon-completed.svg" alt="" width="64" height="64" class="results-icon" id="results-icon">
 
         <h2 class="results-title" id="results-title">Teste Concluído!</h2>
         <p class="results-subtitle" id="results-subtitle">Boa corrida. Continue tentando bater seu recorde.</p>

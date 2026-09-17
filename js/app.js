@@ -17,12 +17,46 @@
 
   const testScreen = document.getElementById("test-screen");
   const resultsScreen = document.getElementById("results-screen");
+  const resultsIconEl = document.getElementById("results-icon");
   const resultsTitleEl = document.getElementById("results-title");
   const resultsSubtitleEl = document.getElementById("results-subtitle");
   const resultsWpmEl = document.getElementById("results-wpm");
   const resultsAccuracyEl = document.getElementById("results-accuracy");
   const resultsCharactersEl = document.getElementById("results-characters");
   const restartButton = document.getElementById("restart-button");
+  const personalBestValueEl = document.getElementById("personal-best-value");
+
+  // ---------------------------------------------------------------------
+  // Recorde pessoal: persiste no localStorage entre sessões. Envolvido em
+  // try/catch porque localStorage pode estar bloqueado (modo privado, etc.)
+  // ---------------------------------------------------------------------
+
+  const PERSONAL_BEST_KEY = "typingSpeedTest.personalBestWpm";
+
+  function getPersonalBest() {
+    try {
+      const raw = localStorage.getItem(PERSONAL_BEST_KEY);
+      return raw === null ? null : Number(raw);
+    } catch {
+      return null;
+    }
+  }
+
+  function setPersonalBest(wpm) {
+    personalBestValueEl.textContent = `${wpm} WPM`;
+    try {
+      localStorage.setItem(PERSONAL_BEST_KEY, String(wpm));
+    } catch {
+      // Sem storage disponível: o recorde só vale pra essa sessão
+    }
+  }
+
+  function renderPersonalBest() {
+    const best = getPersonalBest();
+    personalBestValueEl.textContent = best === null ? "–– WPM" : `${best} WPM`;
+  }
+
+  renderPersonalBest();
 
   // ---------------------------------------------------------------------
   // Passagens: carrega data.json uma vez e sorteia um trecho por dificuldade
@@ -229,10 +263,30 @@
 
   function showResults() {
     const accuracy = calculateAccuracy();
+    const finalWpm = Number(wpmEl.textContent);
+    const previousBest = getPersonalBest();
 
-    resultsTitleEl.textContent = "Teste Concluído!";
-    resultsSubtitleEl.textContent = "Boa corrida. Continue tentando bater seu recorde.";
-    resultsWpmEl.textContent = wpmEl.textContent;
+    resultsScreen.classList.remove("is-high-score");
+
+    if (previousBest === null) {
+      // Primeiro teste já concluído — define a régua inicial
+      setPersonalBest(finalWpm);
+      resultsIconEl.src = "./assets/images/icon-completed.svg";
+      resultsTitleEl.textContent = "Baseline Established!";
+      resultsSubtitleEl.textContent = "Você definiu a régua. Agora o desafio é superar você mesmo.";
+    } else if (finalWpm > previousBest) {
+      setPersonalBest(finalWpm);
+      resultsScreen.classList.add("is-high-score");
+      resultsIconEl.src = "./assets/images/icon-new-pb.svg";
+      resultsTitleEl.textContent = "High Score Smashed!";
+      resultsSubtitleEl.textContent = "Você está cada vez mais rápido. Digitação incrível.";
+    } else {
+      resultsIconEl.src = "./assets/images/icon-completed.svg";
+      resultsTitleEl.textContent = "Teste Concluído!";
+      resultsSubtitleEl.textContent = "Boa corrida. Continue tentando bater seu recorde.";
+    }
+
+    resultsWpmEl.textContent = String(finalWpm);
     resultsAccuracyEl.textContent = `${accuracy}%`;
     resultsAccuracyEl.classList.toggle("is-perfect", accuracy === 100);
     resultsAccuracyEl.classList.toggle("is-error", accuracy < 100);

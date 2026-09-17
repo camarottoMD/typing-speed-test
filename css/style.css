@@ -112,10 +112,10 @@ img {
 .sr-only,
 .brand-text {
   position: absolute;
-  width: 1px;
-  height: 1px;
+  width: 0.0625rem;
+  height: 0.0625rem;
   padding: 0;
-  margin: -1px;
+  margin: -0.0625rem;
   overflow: hidden;
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
@@ -125,15 +125,6 @@ img {
 button {
   font-family: inherit;
   cursor: pointer;
-}
-
-/* Esses componentes têm um `display` próprio (flex) mais específico que o
-   `[hidden]` nativo (que só define display:none no user-agent stylesheet) —
-   sem isso, marcar `hidden` no HTML não escondia o elemento de fato. */
-.start-overlay[hidden],
-.test-restart[hidden],
-.results-screen[hidden] {
-  display: none;
 }
 
 .app {
@@ -274,14 +265,14 @@ button {
   white-space: nowrap;
 }
 
-.control-group .dropdown {
-  flex: 1;
-}
-
 /* O trigger em formato de "select" só existe no mobile — a partir do
    breakpoint maior ele some e o radiogroup abaixo vira pills inline. */
 .dropdown {
   position: relative;
+}
+
+.control-group .dropdown {
+  flex: 1;
 }
 
 .dropdown-trigger {
@@ -442,10 +433,6 @@ button {
   pointer-events: none;
 }
 
-.start-overlay .btn {
-  pointer-events: auto;
-}
-
 .start-hint {
   margin: 0;
   font-weight: 700;
@@ -468,6 +455,12 @@ button {
 
 .btn:active {
   transform: scale(0.98);
+}
+
+/* A área "vazia" do overlay não bloqueia cliques no texto por trás dele
+   (ver .start-overlay) — só o próprio botão precisa ser clicável. */
+.start-overlay .btn {
+  pointer-events: auto;
 }
 
 .btn-primary {
@@ -613,6 +606,18 @@ button {
 
 .attribution a {
   color: var(--blue-400);
+}
+
+/* Esses componentes têm um `display` próprio (flex) mais específico que o
+   `[hidden]` nativo (que só define display:none no user-agent stylesheet) —
+   sem isso, marcar `hidden` no HTML não escondia o elemento de fato.
+   Fica depois das regras-base (.start-overlay/.test-restart/.results-screen)
+   de propósito: seletor com atributo tem mais especificidade, então precisa
+   vir depois pra não ser "vencido" por uma regra-base posterior. */
+.start-overlay[hidden],
+.test-restart[hidden],
+.results-screen[hidden] {
+  display: none;
 }
 
 /* ==========================================================================

@@ -52,18 +52,32 @@
           <div class="stats-controls">
             <div class="control-group" id="difficulty-group">
               <span class="control-label">Dificuldade:</span>
-              <div class="segmented" role="radiogroup" aria-label="Dificuldade da passagem">
-                <button type="button" class="segmented-option is-selected" data-difficulty="easy" role="radio" aria-checked="true">Fácil</button>
-                <button type="button" class="segmented-option" data-difficulty="medium" role="radio" aria-checked="false">Médio</button>
-                <button type="button" class="segmented-option" data-difficulty="hard" role="radio" aria-checked="false">Difícil</button>
+              <!-- No mobile isto vira um dropdown (ver .dropdown-trigger no CSS/JS);
+                   no desktop o trigger fica oculto e o radiogroup aparece como pills -->
+              <div class="dropdown" data-dropdown>
+                <button type="button" class="dropdown-trigger" aria-haspopup="listbox" aria-expanded="false">
+                  <span class="dropdown-trigger-label">Fácil</span>
+                  <img src="./assets/images/icon-down-arrow.svg" alt="" width="11" height="6">
+                </button>
+                <div class="segmented" role="radiogroup" aria-label="Dificuldade da passagem">
+                  <button type="button" class="segmented-option is-selected" data-difficulty="easy" role="radio" aria-checked="true">Fácil</button>
+                  <button type="button" class="segmented-option" data-difficulty="medium" role="radio" aria-checked="false">Médio</button>
+                  <button type="button" class="segmented-option" data-difficulty="hard" role="radio" aria-checked="false">Difícil</button>
+                </div>
               </div>
             </div>
 
             <div class="control-group" id="mode-group">
               <span class="control-label">Modo:</span>
-              <div class="segmented" role="radiogroup" aria-label="Modo do teste">
-                <button type="button" class="segmented-option is-selected" data-mode="timed" role="radio" aria-checked="true">Cronometrado (60s)</button>
-                <button type="button" class="segmented-option" data-mode="passage" role="radio" aria-checked="false">Trecho livre</button>
+              <div class="dropdown" data-dropdown>
+                <button type="button" class="dropdown-trigger" aria-haspopup="listbox" aria-expanded="false">
+                  <span class="dropdown-trigger-label">Cronometrado (60s)</span>
+                  <img src="./assets/images/icon-down-arrow.svg" alt="" width="11" height="6">
+                </button>
+                <div class="segmented" role="radiogroup" aria-label="Modo do teste">
+                  <button type="button" class="segmented-option is-selected" data-mode="timed" role="radio" aria-checked="true">Cronometrado (60s)</button>
+                  <button type="button" class="segmented-option" data-mode="passage" role="radio" aria-checked="false">Trecho livre</button>
+                </div>
               </div>
             </div>
           </div>
@@ -118,5 +132,6 @@
 
   </div>
 
+  <script src="./js/app.js" defer></script>
 </body>
 </html>

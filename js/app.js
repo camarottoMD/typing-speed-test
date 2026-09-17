@@ -8,12 +8,17 @@
   "use strict";
 
   const passageEl = document.getElementById("passage");
+  const startOverlay = document.getElementById("start-overlay");
+  const startButton = document.getElementById("start-button");
+  const typingInput = document.getElementById("typing-input");
+  const accuracyEl = document.getElementById("stat-accuracy");
 
   // ---------------------------------------------------------------------
   // Passagens: carrega data.json uma vez e sorteia um trecho por dificuldade
   // ---------------------------------------------------------------------
 
   let passagesByDifficulty = null;
+  let currentPassageText = "";
 
   async function loadPassages() {
     if (passagesByDifficulty) return passagesByDifficulty;
@@ -28,11 +33,28 @@
     return list[Math.floor(Math.random() * list.length)];
   }
 
+  /** Recria a passagem como um span por caractere — é isso que o motor de
+   *  digitação usa pra pintar acerto/erro/cursor em cada posição. */
+  function renderPassageSpans(text) {
+    const fragment = document.createDocumentFragment();
+    for (const char of text) {
+      const span = document.createElement("span");
+      span.className = "char";
+      span.textContent = char;
+      fragment.appendChild(span);
+    }
+    passageEl.innerHTML = "";
+    passageEl.appendChild(fragment);
+  }
+
   async function showRandomPassage(difficulty) {
     await loadPassages();
     const passage = pickRandomPassage(difficulty);
-    passageEl.textContent = passage.text;
+    currentPassageText = passage.text;
     passageEl.dataset.passageId = passage.id;
+    renderPassageSpans(passage.text);
+    resetTypingState();
+    lockPassage();
   }
 
   function getSelectedDifficulty() {
@@ -47,13 +69,84 @@
   });
 
   // ---------------------------------------------------------------------
-  // Início do teste: desbloqueia a passagem e joga o foco pro input oculto.
-  // A lógica de comparar o que foi digitado com a passagem entra na próxima etapa.
+  // Motor de digitação: compara o valor do input oculto, caractere a
+  // caractere, com a passagem — e pinta o resultado nos spans.
   // ---------------------------------------------------------------------
 
-  const startOverlay = document.getElementById("start-overlay");
-  const startButton = document.getElementById("start-button");
-  const typingInput = document.getElementById("typing-input");
+  let previousValue = "";
+  let correctKeystrokes = 0;
+  let incorrectKeystrokes = 0;
+
+  function resetTypingState() {
+    previousValue = "";
+    correctKeystrokes = 0;
+    incorrectKeystrokes = 0;
+    typingInput.value = "";
+    updateAccuracyDisplay();
+  }
+
+  function updateAccuracyDisplay() {
+    const total = correctKeystrokes + incorrectKeystrokes;
+    const accuracy = total === 0 ? 100 : Math.round((correctKeystrokes / total) * 100);
+    accuracyEl.textContent = `${accuracy}%`;
+    // Sem digitação ainda: mantém a cor neutra padrão do estado inicial
+    accuracyEl.classList.toggle("is-perfect", total > 0 && accuracy === 100);
+    accuracyEl.classList.toggle("is-error", accuracy < 100);
+  }
+
+  /** Repinta cada span da passagem de acordo com o valor atual do input. */
+  function renderDiff(value) {
+    const chars = passageEl.children;
+    for (let i = 0; i < chars.length; i++) {
+      const span = chars[i];
+      span.classList.remove("is-correct", "is-incorrect", "is-cursor");
+      if (i < value.length) {
+        span.classList.add(value[i] === currentPassageText[i] ? "is-correct" : "is-incorrect");
+      }
+    }
+    if (value.length < chars.length) {
+      chars[value.length].classList.add("is-cursor");
+    }
+  }
+
+  typingInput.addEventListener("input", () => {
+    let value = typingInput.value;
+
+    // Não deixa digitar além do tamanho da passagem
+    if (value.length > currentPassageText.length) {
+      value = value.slice(0, currentPassageText.length);
+      typingInput.value = value;
+    }
+
+    // Só conta keystroke (certo/errado) quando o texto cresce — apagar com
+    // backspace não desfaz o erro já contabilizado, só tira a marcação visual
+    if (value.length > previousValue.length) {
+      for (let i = previousValue.length; i < value.length; i++) {
+        if (value[i] === currentPassageText[i]) {
+          correctKeystrokes++;
+        } else {
+          incorrectKeystrokes++;
+        }
+      }
+    }
+
+    previousValue = value;
+    renderDiff(value);
+    updateAccuracyDisplay();
+  });
+
+  // Colar texto tornaria o teste trivial — só digitação de verdade conta
+  typingInput.addEventListener("paste", (event) => event.preventDefault());
+
+  // ---------------------------------------------------------------------
+  // Início/reinício do teste: desbloqueia a passagem e joga o foco pro
+  // input oculto. Cronômetro e WPM entram na próxima etapa.
+  // ---------------------------------------------------------------------
+
+  function lockPassage() {
+    passageEl.classList.add("is-locked");
+    startOverlay.hidden = false;
+  }
 
   function unlockPassage() {
     passageEl.classList.remove("is-locked");

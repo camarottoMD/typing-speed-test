@@ -179,6 +179,14 @@ button {
   font-size: 1.125rem;
 }
 
+#stat-accuracy.is-perfect {
+  color: var(--green-500);
+}
+
+#stat-accuracy.is-error {
+  color: var(--red-500);
+}
+
 .divider {
   width: 1px;
   height: 1.25rem;
@@ -268,6 +276,21 @@ button {
 
 .passage:focus-visible {
   outline: none;
+}
+
+.char.is-correct {
+  color: var(--green-500);
+}
+
+.char.is-incorrect {
+  color: var(--red-500);
+  text-decoration: underline;
+  text-decoration-color: var(--red-500);
+}
+
+.char.is-cursor {
+  background-color: var(--neutral-800);
+  border-radius: 2px;
 }
 
 .start-overlay[hidden] {

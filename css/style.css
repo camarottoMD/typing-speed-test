@@ -342,7 +342,8 @@ button {
   color: var(--neutral-0);
 }
 
-.segmented-option:focus-visible {
+.segmented-option:focus-visible,
+.btn-secondary:focus-visible {
   outline: 2px solid var(--blue-400);
   outline-offset: 2px;
 }
@@ -480,11 +481,6 @@ button {
 
 .btn-secondary:hover {
   background-color: var(--neutral-500);
-}
-
-.btn-secondary:focus-visible {
-  outline: 2px solid var(--blue-400);
-  outline-offset: 2px;
 }
 
 /* ---------- Tela de resultados ---------- */

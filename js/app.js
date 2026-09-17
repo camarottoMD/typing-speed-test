@@ -47,6 +47,32 @@
   });
 
   // ---------------------------------------------------------------------
+  // Início do teste: desbloqueia a passagem e joga o foco pro input oculto.
+  // A lógica de comparar o que foi digitado com a passagem entra na próxima etapa.
+  // ---------------------------------------------------------------------
+
+  const startOverlay = document.getElementById("start-overlay");
+  const startButton = document.getElementById("start-button");
+  const typingInput = document.getElementById("typing-input");
+
+  function unlockPassage() {
+    passageEl.classList.remove("is-locked");
+    startOverlay.hidden = true;
+    typingInput.focus();
+  }
+
+  startButton.addEventListener("click", unlockPassage);
+  passageEl.addEventListener("click", unlockPassage);
+
+  // A passagem é focável (tabindex="0"); Enter/Espaço reproduzem o comportamento de clique
+  passageEl.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      unlockPassage();
+    }
+  });
+
+  // ---------------------------------------------------------------------
   // Dropdowns de dificuldade/modo
   // ---------------------------------------------------------------------
 

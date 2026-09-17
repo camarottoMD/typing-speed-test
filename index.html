@@ -92,6 +92,20 @@
             <button type="button" class="btn btn-primary" id="start-button">Iniciar Teste</button>
             <p class="start-hint">Ou clique no texto e comece a digitar</p>
           </div>
+
+          <!-- Campo real que recebe as teclas digitadas. Fica visualmente oculto:
+               quem "aparenta" receber o foco, pro usuário, é o próprio texto da passagem. -->
+          <input
+            type="text"
+            id="typing-input"
+            class="typing-input sr-only"
+            tabindex="-1"
+            aria-label="Campo de digitação do teste de velocidade"
+            autocomplete="off"
+            autocapitalize="off"
+            autocorrect="off"
+            spellcheck="false"
+          >
         </div>
 
       </section>

@@ -270,6 +270,10 @@ button {
   outline: none;
 }
 
+.start-overlay[hidden] {
+  display: none;
+}
+
 .start-overlay {
   position: absolute;
   inset: 0;
@@ -278,6 +282,13 @@ button {
   align-items: center;
   justify-content: center;
   gap: 1rem;
+  /* A área "vazia" do overlay não deve bloquear cliques no texto por trás dele —
+     só o botão precisa ser clicável. */
+  pointer-events: none;
+}
+
+.start-overlay .btn {
+  pointer-events: auto;
 }
 
 .start-hint {

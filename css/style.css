@@ -416,7 +416,11 @@ button {
   font-weight: 700;
 }
 
-.results-card-accuracy {
+.results-card-accuracy.is-perfect {
+  color: var(--green-500);
+}
+
+.results-card-accuracy.is-error {
   color: var(--red-500);
 }
 

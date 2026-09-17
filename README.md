@@ -7,11 +7,11 @@ Teste de velocidade de digitação construído em HTML, CSS e JavaScript puros. 
 ## Status do projeto
 
 - [x] Estrutura base (HTML semântico + CSS com os tokens do design system)
-- [ ] Layout responsivo (dropdowns no mobile) + estados de hover/focus
-- [ ] Carregamento das passagens (`data.json`) e seleção de dificuldade/modo
-- [ ] Motor do teste de digitação (captura de teclas, marcação de acertos/erros, cursor)
-- [ ] Cronômetro e cálculo de WPM/precisão em tempo real
-- [ ] Tela de resultados e reinício do teste
+- [x] Layout responsivo (dropdowns no mobile) + estados de hover/focus
+- [x] Carregamento das passagens (`data.json`) e seleção de dificuldade/modo
+- [x] Motor do teste de digitação (captura de teclas, marcação de acertos/erros, cursor)
+- [x] Cronômetro e cálculo de WPM/precisão em tempo real
+- [x] Tela de resultados e reinício do teste
 - [ ] Recorde pessoal persistente (`localStorage`) e animação de confete
 
 ## Tecnologias

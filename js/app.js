@@ -15,6 +15,15 @@
   const wpmEl = document.getElementById("stat-wpm");
   const timeEl = document.getElementById("stat-time");
 
+  const testScreen = document.getElementById("test-screen");
+  const resultsScreen = document.getElementById("results-screen");
+  const resultsTitleEl = document.getElementById("results-title");
+  const resultsSubtitleEl = document.getElementById("results-subtitle");
+  const resultsWpmEl = document.getElementById("results-wpm");
+  const resultsAccuracyEl = document.getElementById("results-accuracy");
+  const resultsCharactersEl = document.getElementById("results-characters");
+  const restartButton = document.getElementById("restart-button");
+
   // ---------------------------------------------------------------------
   // Passagens: carrega data.json uma vez e sorteia um trecho por dificuldade
   // ---------------------------------------------------------------------
@@ -83,9 +92,14 @@
   let correctKeystrokes = 0;
   let incorrectKeystrokes = 0;
 
+  function calculateAccuracy() {
+    const total = correctKeystrokes + incorrectKeystrokes;
+    return total === 0 ? 100 : Math.round((correctKeystrokes / total) * 100);
+  }
+
   function updateAccuracyDisplay() {
     const total = correctKeystrokes + incorrectKeystrokes;
-    const accuracy = total === 0 ? 100 : Math.round((correctKeystrokes / total) * 100);
+    const accuracy = calculateAccuracy();
     accuracyEl.textContent = `${accuracy}%`;
     // Sem digitação ainda: mantém a cor neutra padrão do estado inicial
     accuracyEl.classList.toggle("is-perfect", total > 0 && accuracy === 100);
@@ -198,8 +212,9 @@
     tick();
   }
 
-  /** Encerra o teste (tempo esgotado ou trecho completo). A troca pra tela
-   *  de resultados, com esses números finais, entra na próxima etapa. */
+  /** Encerra o teste (tempo esgotado ou trecho completo) e mostra os resultados.
+   *  As mensagens de "recorde batido" entram quando o localStorage for ligado —
+   *  por enquanto é sempre a mensagem genérica de "teste concluído". */
   function finishTest() {
     if (testState === "finished") return;
     testState = "finished";
@@ -209,7 +224,29 @@
     }
     tick();
     typingInput.disabled = true;
+    showResults();
   }
+
+  function showResults() {
+    const accuracy = calculateAccuracy();
+
+    resultsTitleEl.textContent = "Teste Concluído!";
+    resultsSubtitleEl.textContent = "Boa corrida. Continue tentando bater seu recorde.";
+    resultsWpmEl.textContent = wpmEl.textContent;
+    resultsAccuracyEl.textContent = `${accuracy}%`;
+    resultsAccuracyEl.classList.toggle("is-perfect", accuracy === 100);
+    resultsAccuracyEl.classList.toggle("is-error", accuracy < 100);
+    resultsCharactersEl.textContent = `${correctKeystrokes}/${incorrectKeystrokes}`;
+
+    testScreen.hidden = true;
+    resultsScreen.hidden = false;
+  }
+
+  restartButton.addEventListener("click", () => {
+    resultsScreen.hidden = true;
+    testScreen.hidden = false;
+    showRandomPassage(getSelectedDifficulty()).catch((error) => console.error(error));
+  });
 
   /** Zera tudo pra uma tentativa nova: contadores, cronômetro, tela bloqueada. */
   function resetForNewAttempt() {

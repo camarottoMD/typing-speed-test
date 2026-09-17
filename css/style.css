@@ -38,6 +38,9 @@
   /* Neutros */
   --neutral-900: hsl(0, 0%, 7%);
   --neutral-800: hsl(0, 0%, 15%);
+  /* --neutral-500 só dá ~3.92:1 contra --neutral-900 (abaixo dos 4.5:1 da AA
+     pra texto normal) — mantido para bordas/hover onde a checagem é outra,
+     mas texto sobre fundo escuro usa --neutral-400 (~6.3:1). */
   --neutral-500: hsl(240, 3%, 46%);
   --neutral-400: hsl(240, 1%, 59%);
   --neutral-0: hsl(0, 0%, 100%);
@@ -161,7 +164,7 @@ button {
 .brand-subtitle {
   margin: 0;
   font-size: 0.8125rem;
-  color: var(--neutral-500);
+  color: var(--neutral-400);
 }
 
 .personal-best {
@@ -212,7 +215,7 @@ button {
 
 .stat {
   margin: 0;
-  color: var(--neutral-500);
+  color: var(--neutral-400);
   font-size: 0.9375rem;
   white-space: nowrap;
 }
@@ -253,7 +256,7 @@ button {
 }
 
 .control-label {
-  color: var(--neutral-500);
+  color: var(--neutral-400);
   font-size: 0.9375rem;
   white-space: nowrap;
 }
@@ -374,7 +377,7 @@ button {
   margin: 0;
   font-size: clamp(1.375rem, calc(1.243rem + 0.563vw), 1.75rem);
   line-height: 1.6;
-  color: var(--neutral-500);
+  color: var(--neutral-400);
   transition: filter 0.2s ease;
 }
 
@@ -555,7 +558,7 @@ button {
 
 .results-subtitle {
   margin: 0.5rem 0 0;
-  color: var(--neutral-500);
+  color: var(--neutral-400);
 }
 
 .results-cards {
@@ -576,7 +579,7 @@ button {
 
 .results-card-label {
   margin: 0;
-  color: var(--neutral-500);
+  color: var(--neutral-400);
   font-size: 0.9375rem;
 }
 
@@ -608,7 +611,7 @@ button {
   margin-block-start: 3rem;
   font-size: 0.6875rem;
   text-align: center;
-  color: var(--neutral-500);
+  color: var(--neutral-400);
 }
 
 .attribution a {

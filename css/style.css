@@ -95,8 +95,12 @@ img {
   max-inline-size: 100%;
 }
 
-/* Some texto: fica disponível para leitores de tela sem ocupar espaço visual */
-.sr-only {
+/* Some texto: fica disponível para leitores de tela sem ocupar espaço visual.
+   .brand-text usa a mesma técnica (por isso compartilha a regra) — ela só
+   difere por voltar a ficar visível a partir do breakpoint maior, ver
+   @media (min-width: 40em) no fim do arquivo. */
+.sr-only,
+.brand-text {
   position: absolute;
   width: 1px;
   height: 1px;
@@ -151,18 +155,8 @@ button {
 
 /* No mobile o design mostra só o ícone, sem título/subtítulo por extenso.
    Mantemos o texto no DOM (visível a leitores de tela) para não perder
-   contexto — ver a reversão completa no bloco @media de telas maiores. */
-.brand-text {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
-}
+   contexto — ver a reversão completa no bloco @media de telas maiores.
+   (a regra de escondê-lo está compartilhada com .sr-only, acima) */
 
 .brand-title {
   font-size: 1.25rem;

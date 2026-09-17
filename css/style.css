@@ -66,7 +66,12 @@
 }
 
 /* Neutraliza toda transição/animação do site pra quem ativou "reduzir
-   movimento" no sistema, em vez de precisar tratar caso a caso */
+   movimento" no sistema, em vez de precisar tratar caso a caso.
+   !important é intencional aqui: a regra usa `*` de propósito pra pegar
+   qualquer animação/transição futura sem depender da especificidade de cada
+   uma — sem !important, um componente mais específico poderia sobrescrever
+   o reset e voltar a animar, quebrando a preferência de acessibilidade. */
+/* stylelint-disable declaration-no-important */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -77,6 +82,7 @@
     scroll-behavior: auto !important;
   }
 }
+/* stylelint-enable declaration-no-important */
 
 body {
   margin: 0;

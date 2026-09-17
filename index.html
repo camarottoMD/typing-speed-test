@@ -18,7 +18,7 @@
     <!-- Cabeçalho: identidade do app + recorde pessoal (populado via localStorage) -->
     <header class="app-header">
       <div class="brand">
-        <img src="./assets/images/logo-small.svg" alt="" width="32" height="32" class="brand-logo">
+        <img src="./assets/images/logo-small.svg" alt="" aria-hidden="true" width="32" height="32" class="brand-logo">
         <div class="brand-text">
           <h1 class="brand-title">Typing Speed Test</h1>
           <p class="brand-subtitle">Digite o mais rápido que puder</p>
@@ -26,7 +26,7 @@
       </div>
 
       <p class="personal-best">
-        <img src="./assets/images/icon-personal-best.svg" alt="" width="21" height="18">
+        <img src="./assets/images/icon-personal-best.svg" alt="" aria-hidden="true" width="21" height="18">
         <!-- rótulo completo no desktop, versão curta no mobile (ambos no DOM para leitores de tela) -->
         <span class="personal-best-label-full" aria-hidden="true">Recorde pessoal:</span>
         <span class="personal-best-label-short" aria-hidden="true">Melhor:</span>
@@ -47,6 +47,9 @@
             <p class="stat">Precisão: <strong id="stat-accuracy">100%</strong></p>
             <span class="divider" aria-hidden="true"></span>
             <p class="stat">Tempo: <strong id="stat-time">0:60</strong></p>
+            <!-- Anuncia WPM/precisão/tempo pra leitor de tela de forma espaçada
+                 (ver app.js) — os <strong> acima mudam rápido demais pra virarem live region -->
+            <p class="sr-only" id="stats-announcer" aria-live="polite"></p>
           </div>
 
           <div class="stats-controls">
@@ -55,11 +58,11 @@
               <!-- No mobile isto vira um dropdown (ver .dropdown-trigger no CSS/JS);
                    no desktop o trigger fica oculto e o radiogroup aparece como pills -->
               <div class="dropdown" data-dropdown>
-                <button type="button" class="dropdown-trigger" aria-haspopup="listbox" aria-expanded="false">
+                <button type="button" class="dropdown-trigger" aria-expanded="false" aria-controls="difficulty-options">
                   <span class="dropdown-trigger-label">Fácil</span>
-                  <img src="./assets/images/icon-down-arrow.svg" alt="" width="11" height="6">
+                  <img src="./assets/images/icon-down-arrow.svg" alt="" aria-hidden="true" width="11" height="6">
                 </button>
-                <div class="segmented" role="radiogroup" aria-label="Dificuldade da passagem">
+                <div class="segmented" id="difficulty-options" role="radiogroup" aria-label="Dificuldade da passagem">
                   <button type="button" class="segmented-option is-selected" data-difficulty="easy" role="radio" aria-checked="true">Fácil</button>
                   <button type="button" class="segmented-option" data-difficulty="medium" role="radio" aria-checked="false">Médio</button>
                   <button type="button" class="segmented-option" data-difficulty="hard" role="radio" aria-checked="false">Difícil</button>
@@ -70,11 +73,11 @@
             <div class="control-group" id="mode-group">
               <span class="control-label">Modo:</span>
               <div class="dropdown" data-dropdown>
-                <button type="button" class="dropdown-trigger" aria-haspopup="listbox" aria-expanded="false">
+                <button type="button" class="dropdown-trigger" aria-expanded="false" aria-controls="mode-options">
                   <span class="dropdown-trigger-label">Cronometrado (60s)</span>
-                  <img src="./assets/images/icon-down-arrow.svg" alt="" width="11" height="6">
+                  <img src="./assets/images/icon-down-arrow.svg" alt="" aria-hidden="true" width="11" height="6">
                 </button>
-                <div class="segmented" role="radiogroup" aria-label="Modo do teste">
+                <div class="segmented" id="mode-options" role="radiogroup" aria-label="Modo do teste">
                   <button type="button" class="segmented-option is-selected" data-mode="timed" role="radio" aria-checked="true">Cronometrado (60s)</button>
                   <button type="button" class="segmented-option" data-mode="passage" role="radio" aria-checked="false">Trecho livre</button>
                 </div>
@@ -112,7 +115,7 @@
              permite recomeçar a qualquer momento com um novo trecho sorteado. -->
         <div class="test-restart" id="test-restart" hidden>
           <button type="button" class="btn btn-secondary" id="test-restart-button">
-            Reiniciar Teste <img src="./assets/images/icon-restart.svg" alt="" width="20" height="20">
+            Reiniciar Teste <img src="./assets/images/icon-restart.svg" alt="" aria-hidden="true" width="20" height="20">
           </button>
         </div>
 
@@ -127,7 +130,7 @@
         <img src="./assets/images/pattern-star-1.svg" alt="" aria-hidden="true" class="results-decoration results-decoration-star-2">
         <img src="./assets/images/pattern-confetti.svg" alt="" aria-hidden="true" class="results-decoration results-decoration-confetti">
 
-        <img src="./assets/images/icon-completed.svg" alt="" width="64" height="64" class="results-icon" id="results-icon">
+        <img src="./assets/images/icon-completed.svg" alt="" aria-hidden="true" width="64" height="64" class="results-icon" id="results-icon">
 
         <!-- tabindex="-1": não entra na navegação por Tab, só recebe foco
              via JS quando a tela de resultados aparece (ver app.js) -->
@@ -153,7 +156,7 @@
         </div>
 
         <button type="button" class="btn btn-secondary" id="restart-button">
-          Repetir <img src="./assets/images/icon-restart.svg" alt="" width="20" height="20">
+          Repetir <img src="./assets/images/icon-restart.svg" alt="" aria-hidden="true" width="20" height="20">
         </button>
       </section>
 

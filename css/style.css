@@ -275,7 +275,9 @@ button {
 }
 
 .passage:focus-visible {
-  outline: none;
+  outline: 2px solid var(--blue-400);
+  outline-offset: 6px;
+  border-radius: 4px;
 }
 
 .char.is-correct {

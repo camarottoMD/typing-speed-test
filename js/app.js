@@ -14,6 +14,7 @@
   const accuracyEl = document.getElementById("stat-accuracy");
   const wpmEl = document.getElementById("stat-wpm");
   const timeEl = document.getElementById("stat-time");
+  const statsAnnouncerEl = document.getElementById("stats-announcer");
 
   const testScreen = document.getElementById("test-screen");
   const resultsScreen = document.getElementById("results-screen");
@@ -201,10 +202,14 @@
   // ---------------------------------------------------------------------
 
   const TIMED_DURATION_SECONDS = 60;
+  // Anunciar a cada tick (250ms) spamaria leitores de tela — só falamos os
+  // números de novo depois desse intervalo
+  const STATS_ANNOUNCE_INTERVAL_MS = 5000;
 
   let testState = "idle"; // idle -> running -> finished
   let startTimestamp = 0;
   let timerIntervalId = null;
+  let lastStatsAnnounceAt = 0;
 
   function formatMinutesSeconds(totalSeconds) {
     const minutes = Math.floor(totalSeconds / 60);
@@ -235,10 +240,24 @@
     }
 
     wpmEl.textContent = String(calculateWpm(elapsedSeconds));
+    announceStatsThrottled();
 
     if (mode === "timed" && elapsedSeconds >= TIMED_DURATION_SECONDS) {
       finishTest();
     }
+  }
+
+  /** Atualiza a live region de estatísticas no máximo 1x a cada 5s — os
+   *  <strong> visuais mudam a cada 250ms, o que seria barulho demais pra
+   *  leitor de tela se anunciado toda vez. */
+  function announceStatsThrottled() {
+    const now = Date.now();
+    if (now - lastStatsAnnounceAt < STATS_ANNOUNCE_INTERVAL_MS) return;
+    lastStatsAnnounceAt = now;
+    statsAnnouncerEl.textContent =
+      `${wpmEl.textContent} palavras por minuto, ` +
+      `precisão ${calculateAccuracy()}%, ` +
+      `tempo ${timeEl.textContent}`;
   }
 
   function startTest() {
@@ -329,6 +348,8 @@
     updateAccuracyDisplay();
     wpmEl.textContent = "0";
     renderInitialTime();
+    statsAnnouncerEl.textContent = "";
+    lastStatsAnnounceAt = 0;
     lockPassage();
   }
 

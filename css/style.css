@@ -57,6 +57,10 @@
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-pill: 999px;
+
+  /* Só existe uma camada de sobreposição no layout (o menu do dropdown),
+     mas nomear a variável deixa claro o que o valor representa. */
+  --z-dropdown-menu: 20;
 }
 
 *,
@@ -311,7 +315,7 @@ button {
   position: absolute;
   inset-block-start: calc(100% + 0.5rem);
   inset-inline: 0;
-  z-index: 20;
+  z-index: var(--z-dropdown-menu);
   flex-direction: column;
   gap: 0.125rem;
   background-color: var(--neutral-900);

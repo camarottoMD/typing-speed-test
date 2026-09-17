@@ -1,6 +1,13 @@
 /* ==========================================================================
    Typing Speed Test — estilos base
    Fonte: Sora (auto-hospedada). Paleta e tipografia seguem o style-guide.md
+
+   Abordagem: mobile-first (a base do arquivo já é o layout mobile; o bloco
+   @media (min-width: ...) no final adapta pra telas maiores) + propriedades
+   lógicas (inline/block em vez de left/right/top/bottom, pensando em i18n)
+   + valores fluidos com clamp()/calc() onde o espaçamento/tipografia escala
+   continuamente entre os dois breakpoints de referência do desafio
+   (375px e 1440px), evitando "pulos" bruscos no meio do caminho.
    ========================================================================== */
 
 @font-face {
@@ -70,7 +77,7 @@
 
 body {
   margin: 0;
-  min-height: 100vh;
+  min-block-size: 100vh;
   background-color: var(--neutral-900);
   color: var(--neutral-0);
   font-family: var(--font-body);
@@ -82,7 +89,7 @@ body {
 
 img {
   display: block;
-  max-width: 100%;
+  max-inline-size: 100%;
 }
 
 /* Some texto: fica disponível para leitores de tela sem ocupar espaço visual */
@@ -104,10 +111,12 @@ button {
 }
 
 .app {
-  max-width: 1200px;
+  max-inline-size: 1200px;
   margin-inline: auto;
-  padding: 2rem 1.5rem 3rem;
-  min-height: 100vh;
+  padding-block: clamp(1.5rem, calc(1.324rem + 0.751vw), 2rem)
+    clamp(2.5rem, calc(2.324rem + 0.751vw), 3rem);
+  padding-inline: clamp(1.25rem, calc(1.162rem + 0.376vw), 1.5rem);
+  min-block-size: 100vh;
   display: flex;
   flex-direction: column;
 }
@@ -126,6 +135,21 @@ button {
   display: flex;
   align-items: center;
   gap: 0.75rem;
+}
+
+/* No mobile o design mostra só o ícone, sem título/subtítulo por extenso.
+   Mantemos o texto no DOM (visível a leitores de tela) para não perder
+   contexto — ver a reversão completa no bloco @media de telas maiores. */
+.brand-text {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 .brand-title {
@@ -154,31 +178,36 @@ button {
   font-weight: 700;
 }
 
-.personal-best-label-short {
+/* Rótulo curto ("Melhor:") no mobile, completo ("Recorde pessoal:") a
+   partir do breakpoint de telas maiores — ver bloco @media abaixo. */
+.personal-best-label-full {
   display: none;
+}
+
+.personal-best-label-short {
+  display: inline;
 }
 
 /* ---------- Barra de estatísticas + controles ---------- */
 
 .app-main {
-  margin-top: 2.5rem;
+  margin-block-start: clamp(1.5rem, calc(1.148rem + 1.502vw), 2.5rem);
   flex: 1;
 }
 
 .stats-bar {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 1rem;
-  padding-bottom: 1.25rem;
-  border-bottom: 1px solid var(--neutral-800);
+  flex-direction: column;
+  align-items: stretch;
+  gap: 1.25rem;
+  padding-block-end: 1.25rem;
+  border-block-end: 1px solid var(--neutral-800);
 }
 
 .stats-live {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: clamp(0.75rem, calc(0.662rem + 0.376vw), 1rem);
 }
 
 .stat {
@@ -191,7 +220,7 @@ button {
 .stat strong {
   color: var(--neutral-0);
   font-weight: 700;
-  font-size: 1.125rem;
+  font-size: clamp(1rem, calc(0.956rem + 0.188vw), 1.125rem);
 }
 
 .stat-accuracy.is-perfect {
@@ -210,14 +239,16 @@ button {
 
 .stats-controls {
   display: flex;
-  align-items: center;
-  gap: 1.5rem;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.75rem;
   flex-wrap: wrap;
 }
 
 .control-group {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 0.625rem;
 }
 
@@ -227,26 +258,82 @@ button {
   white-space: nowrap;
 }
 
-.segmented {
+.control-group .dropdown {
+  flex: 1;
+}
+
+/* O trigger em formato de "select" só existe no mobile — a partir do
+   breakpoint maior ele some e o radiogroup abaixo vira pills inline. */
+.dropdown {
+  position: relative;
+}
+
+.dropdown-trigger {
   display: flex;
+  align-items: center;
+  justify-content: space-between;
   gap: 0.5rem;
+  inline-size: 100%;
+  border: 1px solid var(--neutral-800);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--neutral-0);
+  font-weight: 600;
+  font-size: 0.875rem;
+  padding-block: 0.5rem;
+  padding-inline: 0.875rem;
+}
+
+.dropdown-trigger img {
+  transition: transform 0.15s ease;
+}
+
+.dropdown-trigger[aria-expanded="true"] img {
+  transform: rotate(180deg);
+}
+
+/* O radiogroup, escondido por padrão no mobile, vira o "menu" do dropdown
+   quando aberto. A partir do breakpoint maior ele volta a ser inline (pills). */
+.segmented {
+  display: none;
+  position: absolute;
+  inset-block-start: calc(100% + 0.5rem);
+  inset-inline: 0;
+  z-index: 20;
+  flex-direction: column;
+  gap: 0.125rem;
+  background-color: var(--neutral-900);
+  border: 1px solid var(--neutral-800);
+  border-radius: var(--radius-md);
+  padding: 0.375rem;
+}
+
+.dropdown.is-open .segmented {
+  display: flex;
 }
 
 .segmented-option {
   appearance: none;
   background: transparent;
-  border: 1px solid var(--neutral-800);
+  border: none;
+  border-radius: var(--radius-sm);
   color: var(--neutral-0);
-  border-radius: var(--radius-pill);
-  padding: 0.375rem 0.875rem;
+  inline-size: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  justify-content: flex-start;
+  text-align: start;
   font-size: 0.875rem;
-  font-weight: 600;
-  transition: border-color 0.15s ease, color 0.15s ease;
+  font-weight: 400;
+  padding-block: 0.625rem;
+  padding-inline: 0.5rem;
+  transition: border-color 0.15s ease, color 0.15s ease, background-color 0.15s ease;
 }
 
 .segmented-option:hover {
-  border-color: var(--blue-400);
-  color: var(--blue-400);
+  background-color: var(--neutral-800);
+  color: var(--neutral-0);
 }
 
 .segmented-option:focus-visible {
@@ -254,31 +341,38 @@ button {
   outline-offset: 2px;
 }
 
-.segmented-option.is-selected {
+/* "Bolinha" de rádio desenhada em CSS — só aparece no formato de lista do
+   mobile; a partir do breakpoint maior as pills não usam esse indicador. */
+.segmented-option::before {
+  content: "";
+  box-sizing: border-box;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  border: 1.5px solid var(--neutral-500);
+}
+
+.segmented-option.is-selected::before {
   border-color: var(--blue-600);
+  background-color: var(--blue-600);
+  box-shadow: inset 0 0 0 2.5px var(--neutral-900);
+}
+
+.segmented-option.is-selected {
   color: var(--blue-400);
-}
-
-/* O trigger só existe visualmente no mobile (vira um botão "select" que abre
-   o radiogroup como um painel flutuante). No desktop fica fora do fluxo. */
-.dropdown {
-  position: relative;
-}
-
-.dropdown-trigger {
-  display: none;
 }
 
 /* ---------- Trecho a digitar ---------- */
 
 .passage-wrapper {
   position: relative;
-  margin-top: 2.5rem;
+  margin-block-start: clamp(1.75rem, calc(1.486rem + 1.127vw), 2.5rem);
 }
 
 .passage {
   margin: 0;
-  font-size: 1.75rem;
+  font-size: clamp(1.375rem, calc(1.243rem + 0.563vw), 1.75rem);
   line-height: 1.6;
   color: var(--neutral-500);
   transition: filter 0.2s ease;
@@ -321,9 +415,9 @@ button {
 .test-restart {
   display: flex;
   justify-content: center;
-  margin-top: 2.5rem;
-  padding-top: 2rem;
-  border-top: 1px solid var(--neutral-800);
+  margin-block-start: 2.5rem;
+  padding-block-start: 2rem;
+  border-block-start: 1px solid var(--neutral-800);
 }
 
 .start-overlay {
@@ -353,7 +447,8 @@ button {
 .btn {
   border: none;
   border-radius: var(--radius-sm);
-  padding: 0.875rem 1.75rem;
+  padding-block: 0.875rem;
+  padding-inline: 1.75rem;
   font-size: 1rem;
   font-weight: 700;
   display: inline-flex;
@@ -406,7 +501,7 @@ button {
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding-top: 3rem;
+  padding-block-start: 3rem;
   overflow: hidden;
 }
 
@@ -416,15 +511,15 @@ button {
 }
 
 .results-decoration-star-1 {
-  top: 1.5rem;
-  left: 0.5rem;
+  inset-block-start: 1.5rem;
+  inset-inline-start: 0.5rem;
   width: 48px;
   height: 48px;
 }
 
 .results-decoration-star-2 {
-  bottom: 5rem;
-  right: 1rem;
+  inset-block-end: 5rem;
+  inset-inline-end: 1rem;
   width: 24px;
   height: 24px;
 }
@@ -432,8 +527,8 @@ button {
 /* O confete só aparece quando um recorde pessoal é batido */
 .results-decoration-confetti {
   display: none;
-  bottom: 0;
-  left: 0;
+  inset-block-end: 0;
+  inset-inline-start: 0;
   width: 100%;
   height: auto;
 }
@@ -465,7 +560,7 @@ button {
 
 .results-cards {
   display: flex;
-  gap: 1rem;
+  gap: clamp(0.75rem, calc(0.662rem + 0.376vw), 1rem);
   margin: 2rem 0;
   flex-wrap: wrap;
   justify-content: center;
@@ -474,8 +569,9 @@ button {
 .results-card {
   border: 1px solid var(--neutral-800);
   border-radius: var(--radius-md);
-  padding: 1rem 1.5rem;
-  min-width: 120px;
+  padding-block: clamp(0.875rem, calc(0.831rem + 0.188vw), 1rem);
+  padding-inline: clamp(1rem, calc(0.824rem + 0.751vw), 1.5rem);
+  min-inline-size: clamp(6.25rem, calc(5.81rem + 1.878vw), 7.5rem);
 }
 
 .results-card-label {
@@ -509,7 +605,7 @@ button {
 /* ---------- Rodapé ---------- */
 
 .attribution {
-  margin-top: 3rem;
+  margin-block-start: 3rem;
   font-size: 0.6875rem;
   text-align: center;
   color: var(--neutral-500);
@@ -520,160 +616,92 @@ button {
 }
 
 /* ==========================================================================
-   Responsivo — mobile (referência: design/mobile-*.jpg, largura base 375px)
+   A partir daqui, telas maiores (~640px/40em+, referência desktop 1440px).
+   Mobile-first: a base do arquivo é o layout mobile; este bloco só troca o
+   que muda estruturalmente (colunas viram linhas, dropdown vira pills etc.).
+   Espaçamento e tipografia que escalam continuamente já usam clamp() acima
+   e não precisam de override aqui.
    ========================================================================== */
 
-@media (max-width: 40em) {
-  .app {
-    padding: 1.5rem 1.25rem 2.5rem;
-  }
-
-  /* No mobile o design mostra só o ícone, sem título/subtítulo por extenso.
-     Mantemos o texto no DOM (visível a leitores de tela) para não perder contexto. */
+@media (min-width: 40em) {
   .brand-text {
-    position: absolute;
-    width: 1px;
-    height: 1px;
+    position: static;
+    width: auto;
+    height: auto;
     padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
+    margin: 0;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
     border: 0;
   }
 
   .personal-best-label-full {
-    display: none;
-  }
-
-  .personal-best-label-short {
     display: inline;
   }
 
-  .app-main {
-    margin-top: 1.5rem;
+  .personal-best-label-short {
+    display: none;
   }
 
   .stats-bar {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 1.25rem;
-  }
-
-  .stats-live {
-    gap: 0.75rem;
-  }
-
-  .stat strong {
-    font-size: 1rem;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
   }
 
   .stats-controls {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0.75rem;
+    flex-direction: row;
+    align-items: center;
+    gap: 1.5rem;
   }
 
   .control-group {
-    justify-content: space-between;
+    justify-content: flex-start;
   }
 
   .control-group .dropdown {
-    flex: 1;
+    flex: initial;
   }
 
   .dropdown-trigger {
+    display: none;
+  }
+
+  .segmented {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
+    position: static;
+    flex-direction: row;
     gap: 0.5rem;
-    width: 100%;
+    background-color: transparent;
+    border: none;
+    border-radius: 0;
+    padding: 0;
+  }
+
+  .segmented-option {
     border: 1px solid var(--neutral-800);
     border-radius: var(--radius-pill);
-    background: transparent;
-    color: var(--neutral-0);
+    inline-size: auto;
+    justify-content: center;
+    text-align: center;
+    padding-block: 0.375rem;
+    padding-inline: 0.875rem;
     font-weight: 600;
-    font-size: 0.875rem;
-    padding: 0.5rem 0.875rem;
   }
 
-  .dropdown-trigger img {
-    transition: transform 0.15s ease;
+  .segmented-option:hover {
+    background-color: transparent;
+    border-color: var(--blue-400);
+    color: var(--blue-400);
   }
 
-  .dropdown-trigger[aria-expanded="true"] img {
-    transform: rotate(180deg);
-  }
-
-  /* O radiogroup, escondido por padrão, vira o "menu" do dropdown quando aberto */
-  .dropdown .segmented {
-    display: none;
-    position: absolute;
-    top: calc(100% + 0.5rem);
-    left: 0;
-    right: 0;
-    z-index: 20;
-    flex-direction: column;
-    gap: 0.125rem;
-    background-color: var(--neutral-900);
-    border: 1px solid var(--neutral-800);
-    border-radius: var(--radius-md);
-    padding: 0.375rem;
-  }
-
-  .dropdown.is-open .segmented {
-    display: flex;
-  }
-
-  .dropdown .segmented-option {
-    border: none;
-    border-radius: var(--radius-sm);
-    width: 100%;
-    display: flex;
-    align-items: center;
-    gap: 0.625rem;
-    justify-content: flex-start;
-    text-align: left;
-    font-weight: 400;
-    padding: 0.625rem 0.5rem;
-  }
-
-  .dropdown .segmented-option:hover {
-    background-color: var(--neutral-800);
-    color: var(--neutral-0);
-  }
-
-  /* "Bolinha" de rádio desenhada em CSS, no lugar da borda em pill do desktop */
-  .dropdown .segmented-option::before {
-    content: "";
-    box-sizing: border-box;
-    width: 16px;
-    height: 16px;
-    flex-shrink: 0;
-    border-radius: 50%;
-    border: 1.5px solid var(--neutral-500);
-  }
-
-  .dropdown .segmented-option.is-selected::before {
+  .segmented-option.is-selected {
     border-color: var(--blue-600);
-    background-color: var(--blue-600);
-    box-shadow: inset 0 0 0 2.5px var(--neutral-900);
   }
 
-  .passage-wrapper {
-    margin-top: 1.75rem;
-  }
-
-  .passage {
-    font-size: 1.375rem;
-  }
-
-  .results-cards {
-    gap: 0.75rem;
-  }
-
-  .results-card {
-    padding: 0.875rem 1rem;
-    min-width: 100px;
+  .segmented-option::before {
+    content: none;
   }
 }

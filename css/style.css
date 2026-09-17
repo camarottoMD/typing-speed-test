@@ -235,8 +235,8 @@ button {
 }
 
 .divider {
-  width: 1px;
-  height: 1.25rem;
+  inline-size: 1px;
+  block-size: 1.25rem;
   background-color: var(--neutral-800);
 }
 
@@ -349,8 +349,8 @@ button {
 .segmented-option::before {
   content: "";
   box-sizing: border-box;
-  width: 16px;
-  height: 16px;
+  inline-size: 16px;
+  block-size: 16px;
   flex-shrink: 0;
   border-radius: 50%;
   border: 1.5px solid var(--neutral-500);
@@ -516,15 +516,15 @@ button {
 .results-decoration-star-1 {
   inset-block-start: 1.5rem;
   inset-inline-start: 0.5rem;
-  width: 48px;
-  height: 48px;
+  inline-size: 48px;
+  block-size: 48px;
 }
 
 .results-decoration-star-2 {
   inset-block-end: 5rem;
   inset-inline-end: 1rem;
-  width: 24px;
-  height: 24px;
+  inline-size: 24px;
+  block-size: 24px;
 }
 
 /* O confete só aparece quando um recorde pessoal é batido */
@@ -532,8 +532,8 @@ button {
   display: none;
   inset-block-end: 0;
   inset-inline-start: 0;
-  width: 100%;
-  height: auto;
+  inline-size: 100%;
+  block-size: auto;
 }
 
 .results-screen.is-high-score .results-decoration-confetti {
@@ -546,7 +546,7 @@ button {
 }
 
 .results-title {
-  margin: 1.5rem 0 0;
+  margin-block-start: 1.5rem;
   font-size: 2rem;
 }
 
@@ -557,14 +557,14 @@ button {
 }
 
 .results-subtitle {
-  margin: 0.5rem 0 0;
+  margin-block-start: 0.5rem;
   color: var(--neutral-400);
 }
 
 .results-cards {
   display: flex;
   gap: clamp(0.75rem, calc(0.662rem + 0.376vw), 1rem);
-  margin: 2rem 0;
+  margin-block: 2rem;
   flex-wrap: wrap;
   justify-content: center;
 }
@@ -584,7 +584,7 @@ button {
 }
 
 .results-card-value {
-  margin: 0.25rem 0 0;
+  margin-block-start: 0.25rem;
   font-size: 1.5rem;
   font-weight: 700;
 }

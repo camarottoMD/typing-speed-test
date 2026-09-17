@@ -1,0 +1,373 @@
+/* ==========================================================================
+   Typing Speed Test — estilos base
+   Fonte: Sora (auto-hospedada). Paleta e tipografia seguem o style-guide.md
+   ========================================================================== */
+
+@font-face {
+  font-family: "Sora";
+  src: url("../assets/fonts/Sora/static/Sora-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Sora";
+  src: url("../assets/fonts/Sora/static/Sora-SemiBold.ttf") format("truetype");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Sora";
+  src: url("../assets/fonts/Sora/static/Sora-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  /* Neutros */
+  --neutral-900: hsl(0, 0%, 7%);
+  --neutral-800: hsl(0, 0%, 15%);
+  --neutral-500: hsl(240, 3%, 46%);
+  --neutral-400: hsl(240, 1%, 59%);
+  --neutral-0: hsl(0, 0%, 100%);
+
+  /* Cores de apoio */
+  --blue-600: hsl(214, 100%, 55%);
+  --blue-400: hsl(210, 100%, 65%);
+  --red-500: hsl(354, 63%, 57%);
+  --green-500: hsl(140, 63%, 57%);
+  --yellow-400: hsl(49, 85%, 70%);
+
+  --font-body: "Sora", system-ui, sans-serif;
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-pill: 999px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background-color: var(--neutral-900);
+  color: var(--neutral-0);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.app {
+  max-width: 1200px;
+  margin-inline: auto;
+  padding: 2rem 1.5rem 3rem;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---------- Cabeçalho ---------- */
+
+.app-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.brand-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.brand-subtitle {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--neutral-500);
+}
+
+.personal-best {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+  color: var(--neutral-400);
+  font-size: 0.9375rem;
+}
+
+.personal-best strong {
+  color: var(--neutral-0);
+  font-weight: 700;
+}
+
+/* ---------- Barra de estatísticas + controles ---------- */
+
+.app-main {
+  margin-top: 2.5rem;
+  flex: 1;
+}
+
+.stats-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--neutral-800);
+}
+
+.stats-live {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.stat {
+  margin: 0;
+  color: var(--neutral-500);
+  font-size: 0.9375rem;
+  white-space: nowrap;
+}
+
+.stat strong {
+  color: var(--neutral-0);
+  font-weight: 700;
+  font-size: 1.125rem;
+}
+
+.divider {
+  width: 1px;
+  height: 1.25rem;
+  background-color: var(--neutral-800);
+}
+
+.stats-controls {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.control-group {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+}
+
+.control-label {
+  color: var(--neutral-500);
+  font-size: 0.9375rem;
+  white-space: nowrap;
+}
+
+.segmented {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.segmented-option {
+  appearance: none;
+  background: transparent;
+  border: 1px solid var(--neutral-800);
+  color: var(--neutral-0);
+  border-radius: var(--radius-pill);
+  padding: 0.375rem 0.875rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.segmented-option:hover {
+  border-color: var(--blue-400);
+  color: var(--blue-400);
+}
+
+.segmented-option:focus-visible {
+  outline: 2px solid var(--blue-400);
+  outline-offset: 2px;
+}
+
+.segmented-option.is-selected {
+  border-color: var(--blue-600);
+  color: var(--blue-400);
+}
+
+/* ---------- Trecho a digitar ---------- */
+
+.passage-wrapper {
+  position: relative;
+  margin-top: 2.5rem;
+}
+
+.passage {
+  margin: 0;
+  font-size: 1.75rem;
+  line-height: 1.6;
+  color: var(--neutral-500);
+  transition: filter 0.2s ease;
+}
+
+.passage.is-locked {
+  filter: blur(4px);
+  user-select: none;
+}
+
+.passage:focus-visible {
+  outline: none;
+}
+
+.start-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.start-hint {
+  margin: 0;
+  font-weight: 700;
+}
+
+/* ---------- Botões ---------- */
+
+.btn {
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 0.875rem 1.75rem;
+  font-size: 1rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: background-color 0.15s ease, transform 0.1s ease;
+}
+
+.btn:active {
+  transform: scale(0.98);
+}
+
+.btn-primary {
+  background-color: var(--blue-600);
+  color: var(--neutral-0);
+}
+
+.btn-primary:hover {
+  background-color: var(--blue-400);
+}
+
+.btn-primary:focus-visible {
+  outline: 2px solid var(--neutral-0);
+  outline-offset: 2px;
+}
+
+.btn-secondary {
+  background-color: var(--neutral-800);
+  color: var(--neutral-0);
+}
+
+.btn-secondary:hover {
+  background-color: var(--neutral-500);
+}
+
+.btn-secondary:focus-visible {
+  outline: 2px solid var(--blue-400);
+  outline-offset: 2px;
+}
+
+/* ---------- Tela de resultados ---------- */
+
+.results-screen[hidden] {
+  display: none;
+}
+
+.results-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding-top: 3rem;
+}
+
+.results-title {
+  margin: 1.5rem 0 0;
+  font-size: 2rem;
+}
+
+.results-subtitle {
+  margin: 0.5rem 0 0;
+  color: var(--neutral-500);
+}
+
+.results-cards {
+  display: flex;
+  gap: 1rem;
+  margin: 2rem 0;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.results-card {
+  border: 1px solid var(--neutral-800);
+  border-radius: var(--radius-md);
+  padding: 1rem 1.5rem;
+  min-width: 120px;
+}
+
+.results-card-label {
+  margin: 0;
+  color: var(--neutral-500);
+  font-size: 0.9375rem;
+}
+
+.results-card-value {
+  margin: 0.25rem 0 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.results-card-accuracy {
+  color: var(--red-500);
+}
+
+/* ---------- Rodapé ---------- */
+
+.attribution {
+  margin-top: 3rem;
+  font-size: 0.6875rem;
+  text-align: center;
+  color: var(--neutral-500);
+}
+
+.attribution a {
+  color: var(--blue-400);
+}

@@ -1,57 +1,118 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- displays site properly based on user's device -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <link rel="icon" type="image/png" sizes="32x32" href="./assets/images/favicon-32x32.png">
-  
-  <title>Frontend Mentor | Typing Speed Test</title>
 
-  <!-- Feel free to remove these styles or customise in your own stylesheet 👍 -->
-  <style>
-    .attribution { font-size: 0.6875rem; text-align: center; }
-    .attribution a { color: hsl(228, 45%, 44%); }
-  </style>
+  <title>Typing Speed Test</title>
+  <meta name="description" content="Teste sua velocidade de digitação em português. Escolha a dificuldade, cronometre e supere seu recorde pessoal.">
+
+  <link rel="stylesheet" href="./css/style.css">
 </head>
 <body>
 
-  Personal best: <!-- PB --> WPM
+  <div class="app">
 
-  WPM: <!-- WPM -->
-  Accuracy: <!-- Accuracy -->
-  Time: <!-- Time -->
+    <!-- Cabeçalho: identidade do app + recorde pessoal (populado via localStorage) -->
+    <header class="app-header">
+      <div class="brand">
+        <img src="./assets/images/logo-small.svg" alt="" width="32" height="32" class="brand-logo">
+        <div class="brand-text">
+          <h1 class="brand-title">Typing Speed Test</h1>
+          <p class="brand-subtitle">Digite o mais rápido que puder</p>
+        </div>
+      </div>
 
-  Difficulty:
-  Easy
-  Medium
-  Hard
+      <p class="personal-best">
+        <img src="./assets/images/icon-personal-best.svg" alt="" width="21" height="18">
+        Recorde pessoal: <strong id="personal-best-value">&ndash;&ndash; WPM</strong>
+      </p>
+    </header>
 
-  Mode:
-  Timed (60s)
-  Passage
+    <main class="app-main">
 
-  <!-- Passage -->
+      <!-- Tela do teste: stats ao vivo, seletores e o trecho a ser digitado -->
+      <section class="test-screen" id="test-screen">
 
-  Start Typing Test
-  Or click the text and start typing
+        <div class="stats-bar">
+          <div class="stats-live">
+            <p class="stat">WPM: <strong id="stat-wpm">0</strong></p>
+            <span class="divider" aria-hidden="true"></span>
+            <p class="stat">Precisão: <strong id="stat-accuracy">100%</strong></p>
+            <span class="divider" aria-hidden="true"></span>
+            <p class="stat">Tempo: <strong id="stat-time">0:60</strong></p>
+          </div>
 
-  <!-- Test Complete Start -->
+          <div class="stats-controls">
+            <div class="control-group" id="difficulty-group">
+              <span class="control-label">Dificuldade:</span>
+              <div class="segmented" role="radiogroup" aria-label="Dificuldade da passagem">
+                <button type="button" class="segmented-option is-selected" data-difficulty="easy" role="radio" aria-checked="true">Fácil</button>
+                <button type="button" class="segmented-option" data-difficulty="medium" role="radio" aria-checked="false">Médio</button>
+                <button type="button" class="segmented-option" data-difficulty="hard" role="radio" aria-checked="false">Difícil</button>
+              </div>
+            </div>
 
-  Test Complete!
-  Solid run. Keep pushing to beat your high score.
+            <div class="control-group" id="mode-group">
+              <span class="control-label">Modo:</span>
+              <div class="segmented" role="radiogroup" aria-label="Modo do teste">
+                <button type="button" class="segmented-option is-selected" data-mode="timed" role="radio" aria-checked="true">Cronometrado (60s)</button>
+                <button type="button" class="segmented-option" data-mode="passage" role="radio" aria-checked="false">Trecho livre</button>
+              </div>
+            </div>
+          </div>
+        </div>
 
-  WPM: <!-- WPM -->
-  Accuracy: <!-- Accuracy -->
-  Characters: <!-- Correct/Incorrect -->
+        <div class="passage-wrapper">
+          <p class="passage is-locked" id="passage" tabindex="0">
+            O sol nasceu sobre a cidade tranquila. Os pássaros cantavam nas árvores enquanto as pessoas acordavam e começavam o dia. Seria uma manhã quente e ensolarada.
+          </p>
 
-  Go Again
-  
-  <!-- Test Complete End -->
+          <div class="start-overlay" id="start-overlay">
+            <button type="button" class="btn btn-primary" id="start-button">Iniciar Teste</button>
+            <p class="start-hint">Ou clique no texto e comece a digitar</p>
+          </div>
+        </div>
 
-  <footer class="attribution">
-    Challenge by <a href="https://www.frontendmentor.io?ref=challenge">Frontend Mentor</a>. 
-    Coded by <a href="#">Your Name Here</a>.
-  </footer>
+      </section>
+
+      <!-- Tela de resultados: exibida ao final do teste, oculta por padrão -->
+      <section class="results-screen" id="results-screen" hidden>
+        <img src="./assets/images/icon-completed.svg" alt="" width="64" height="64" class="results-icon">
+
+        <h2 class="results-title" id="results-title">Teste Concluído!</h2>
+        <p class="results-subtitle" id="results-subtitle">Boa corrida. Continue tentando bater seu recorde.</p>
+
+        <div class="results-cards">
+          <div class="results-card">
+            <p class="results-card-label">WPM:</p>
+            <p class="results-card-value" id="results-wpm">0</p>
+          </div>
+          <div class="results-card">
+            <p class="results-card-label">Precisão:</p>
+            <p class="results-card-value results-card-accuracy" id="results-accuracy">0%</p>
+          </div>
+          <div class="results-card">
+            <p class="results-card-label">Caracteres</p>
+            <p class="results-card-value" id="results-characters">0/0</p>
+          </div>
+        </div>
+
+        <button type="button" class="btn btn-secondary" id="restart-button">
+          Repetir <img src="./assets/images/icon-restart.svg" alt="" width="20" height="20">
+        </button>
+      </section>
+
+    </main>
+
+    <footer class="attribution">
+      Desafio por <a href="https://www.frontendmentor.io?ref=challenge">Frontend Mentor</a>.
+      Codado por <a href="#">Seu Nome Aqui</a>.
+    </footer>
+
+  </div>
+
 </body>
 </html>

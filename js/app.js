@@ -12,6 +12,8 @@
   const startButton = document.getElementById("start-button");
   const typingInput = document.getElementById("typing-input");
   const accuracyEl = document.getElementById("stat-accuracy");
+  const wpmEl = document.getElementById("stat-wpm");
+  const timeEl = document.getElementById("stat-time");
 
   // ---------------------------------------------------------------------
   // Passagens: carrega data.json uma vez e sorteia um trecho por dificuldade
@@ -53,13 +55,17 @@
     currentPassageText = passage.text;
     passageEl.dataset.passageId = passage.id;
     renderPassageSpans(passage.text);
-    resetTypingState();
-    lockPassage();
+    resetForNewAttempt();
   }
 
   function getSelectedDifficulty() {
     const selected = document.querySelector("#difficulty-group .segmented-option.is-selected");
     return selected ? selected.dataset.difficulty : "easy";
+  }
+
+  function getSelectedMode() {
+    const selected = document.querySelector("#mode-group .segmented-option.is-selected");
+    return selected ? selected.dataset.mode : "timed";
   }
 
   // Carrega a primeira passagem assim que o script roda (dificuldade padrão: fácil)
@@ -76,14 +82,6 @@
   let previousValue = "";
   let correctKeystrokes = 0;
   let incorrectKeystrokes = 0;
-
-  function resetTypingState() {
-    previousValue = "";
-    correctKeystrokes = 0;
-    incorrectKeystrokes = 0;
-    typingInput.value = "";
-    updateAccuracyDisplay();
-  }
 
   function updateAccuracyDisplay() {
     const total = correctKeystrokes + incorrectKeystrokes;
@@ -110,6 +108,10 @@
   }
 
   typingInput.addEventListener("input", () => {
+    // A primeira tecla digitada (quando o teste começou por clique na
+    // passagem, não pelo botão) é o gatilho real do cronômetro
+    if (testState === "idle") startTest();
+
     let value = typingInput.value;
 
     // Não deixa digitar além do tamanho da passagem
@@ -133,14 +135,107 @@
     previousValue = value;
     renderDiff(value);
     updateAccuracyDisplay();
+
+    if (value.length === currentPassageText.length) finishTest();
   });
 
   // Colar texto tornaria o teste trivial — só digitação de verdade conta
   typingInput.addEventListener("paste", (event) => event.preventDefault());
 
   // ---------------------------------------------------------------------
-  // Início/reinício do teste: desbloqueia a passagem e joga o foco pro
-  // input oculto. Cronômetro e WPM entram na próxima etapa.
+  // Cronômetro + WPM. Dois modos:
+  //  - "timed": conta 60s regressivos (o mockup mostra "0:60" → "0:00",
+  //    por isso o formato é sempre "0:SS" em vez do mm:ss convencional)
+  //  - "passage": conta pra cima, sem limite, até o trecho acabar
+  // ---------------------------------------------------------------------
+
+  const TIMED_DURATION_SECONDS = 60;
+
+  let testState = "idle"; // idle -> running -> finished
+  let startTimestamp = 0;
+  let timerIntervalId = null;
+
+  function formatMinutesSeconds(totalSeconds) {
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return `${minutes}:${String(seconds).padStart(2, "0")}`;
+  }
+
+  function renderInitialTime() {
+    timeEl.textContent = getSelectedMode() === "timed" ? "0:60" : "0:00";
+  }
+
+  function calculateWpm(elapsedSeconds) {
+    const elapsedMinutes = elapsedSeconds / 60;
+    if (elapsedMinutes <= 0) return 0;
+    // Convenção padrão: 1 "palavra" = 5 caracteres corretos digitados
+    return Math.round(correctKeystrokes / 5 / elapsedMinutes);
+  }
+
+  function tick() {
+    const elapsedSeconds = (Date.now() - startTimestamp) / 1000;
+    const mode = getSelectedMode();
+
+    if (mode === "timed") {
+      const remaining = Math.max(0, TIMED_DURATION_SECONDS - elapsedSeconds);
+      timeEl.textContent = `0:${String(Math.ceil(remaining)).padStart(2, "0")}`;
+    } else {
+      timeEl.textContent = formatMinutesSeconds(Math.floor(elapsedSeconds));
+    }
+
+    wpmEl.textContent = String(calculateWpm(elapsedSeconds));
+
+    if (mode === "timed" && elapsedSeconds >= TIMED_DURATION_SECONDS) {
+      finishTest();
+    }
+  }
+
+  function startTest() {
+    if (testState !== "idle") return;
+    testState = "running";
+    startTimestamp = Date.now();
+    timerIntervalId = setInterval(tick, 250);
+    tick();
+  }
+
+  /** Encerra o teste (tempo esgotado ou trecho completo). A troca pra tela
+   *  de resultados, com esses números finais, entra na próxima etapa. */
+  function finishTest() {
+    if (testState === "finished") return;
+    testState = "finished";
+    if (timerIntervalId) {
+      clearInterval(timerIntervalId);
+      timerIntervalId = null;
+    }
+    tick();
+    typingInput.disabled = true;
+  }
+
+  /** Zera tudo pra uma tentativa nova: contadores, cronômetro, tela bloqueada. */
+  function resetForNewAttempt() {
+    if (timerIntervalId) {
+      clearInterval(timerIntervalId);
+      timerIntervalId = null;
+    }
+    testState = "idle";
+    startTimestamp = 0;
+
+    previousValue = "";
+    correctKeystrokes = 0;
+    incorrectKeystrokes = 0;
+    typingInput.value = "";
+    typingInput.disabled = false;
+
+    updateAccuracyDisplay();
+    wpmEl.textContent = "0";
+    renderInitialTime();
+    lockPassage();
+  }
+
+  // ---------------------------------------------------------------------
+  // Início do teste: desbloqueia a passagem e joga o foco pro input oculto.
+  // Clicar no botão "Iniciar" começa o cronômetro na hora; clicar só no
+  // texto apenas foca — o cronômetro começa na primeira tecla digitada.
   // ---------------------------------------------------------------------
 
   function lockPassage() {
@@ -148,20 +243,21 @@
     startOverlay.hidden = false;
   }
 
-  function unlockPassage() {
+  function unlockPassage(startImmediately) {
     passageEl.classList.remove("is-locked");
     startOverlay.hidden = true;
     typingInput.focus();
+    if (startImmediately) startTest();
   }
 
-  startButton.addEventListener("click", unlockPassage);
-  passageEl.addEventListener("click", unlockPassage);
+  startButton.addEventListener("click", () => unlockPassage(true));
+  passageEl.addEventListener("click", () => unlockPassage(false));
 
   // A passagem é focável (tabindex="0"); Enter/Espaço reproduzem o comportamento de clique
   passageEl.addEventListener("keydown", (event) => {
     if (event.key === "Enter" || event.key === " ") {
       event.preventDefault();
-      unlockPassage();
+      unlockPassage(false);
     }
   });
 
@@ -207,9 +303,12 @@
         dropdown.classList.remove("is-open");
         trigger.setAttribute("aria-expanded", "false");
 
-        // Trocar a dificuldade sorteia um novo trecho compatível com ela
+        // Trocar a dificuldade sorteia um novo trecho compatível com ela;
+        // trocar o modo mantém o trecho mas reinicia o cronômetro/contadores
         if (option.dataset.difficulty) {
           showRandomPassage(option.dataset.difficulty).catch((error) => console.error(error));
+        } else if (option.dataset.mode) {
+          resetForNewAttempt();
         }
       });
     });

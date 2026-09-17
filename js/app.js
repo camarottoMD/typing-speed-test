@@ -412,6 +412,7 @@
   dropdowns.forEach((dropdown) => {
     const trigger = dropdown.querySelector(".dropdown-trigger");
     const triggerLabel = dropdown.querySelector(".dropdown-trigger-label");
+    const radiogroup = dropdown.querySelector('[role="radiogroup"]');
     const options = Array.from(dropdown.querySelectorAll(".segmented-option"));
 
     trigger.addEventListener("click", () => {
@@ -421,29 +422,63 @@
       trigger.setAttribute("aria-expanded", String(willOpen));
     });
 
-    options.forEach((option) => {
-      option.addEventListener("click", () => {
-        // Só uma opção do grupo pode estar selecionada por vez (comportamento de rádio)
-        options.forEach((opt) => {
-          opt.classList.toggle("is-selected", opt === option);
-          opt.setAttribute("aria-checked", String(opt === option));
-        });
+    /** Marca `option` como selecionada do grupo (comportamento de rádio: só
+     *  uma por vez) e aplica "roving tabindex" — só ela fica no fluxo do Tab,
+     *  as demais só são alcançáveis pelas setas (padrão WAI-ARIA de radiogroup). */
+    function selectOption(option, { moveFocus = false } = {}) {
+      options.forEach((opt) => {
+        const isSelected = opt === option;
+        opt.classList.toggle("is-selected", isSelected);
+        opt.setAttribute("aria-checked", String(isSelected));
+        opt.tabIndex = isSelected ? 0 : -1;
+      });
 
-        if (triggerLabel) {
-          triggerLabel.textContent = option.textContent;
-        }
+      if (triggerLabel) {
+        triggerLabel.textContent = option.textContent;
+      }
 
+      if (moveFocus) {
+        // Navegação por teclado: mantém o menu aberto enquanto o usuário
+        // percorre as opções com as setas, igual um <select> nativo.
+        option.focus();
+      } else {
         dropdown.classList.remove("is-open");
         trigger.setAttribute("aria-expanded", "false");
+      }
 
-        // Trocar a dificuldade sorteia um novo trecho compatível com ela;
-        // trocar o modo mantém o trecho mas reinicia o cronômetro/contadores
-        if (option.dataset.difficulty) {
-          showRandomPassage(option.dataset.difficulty).catch((error) => console.error(error));
-        } else if (option.dataset.mode) {
-          resetForNewAttempt();
-        }
-      });
+      // Trocar a dificuldade sorteia um novo trecho compatível com ela;
+      // trocar o modo mantém o trecho mas reinicia o cronômetro/contadores
+      if (option.dataset.difficulty) {
+        showRandomPassage(option.dataset.difficulty).catch((error) => console.error(error));
+      } else if (option.dataset.mode) {
+        resetForNewAttempt();
+      }
+    }
+
+    options.forEach((option) => {
+      option.addEventListener("click", () => selectOption(option));
+    });
+
+    // Setas movem o foco E a seleção entre as opções do grupo, replicando o
+    // comportamento nativo de radio buttons; Home/End pulam pra primeira/última.
+    radiogroup.addEventListener("keydown", (event) => {
+      const currentIndex = options.indexOf(document.activeElement);
+      if (currentIndex === -1) return;
+
+      let nextIndex = null;
+      if (event.key === "ArrowRight" || event.key === "ArrowDown") {
+        nextIndex = (currentIndex + 1) % options.length;
+      } else if (event.key === "ArrowLeft" || event.key === "ArrowUp") {
+        nextIndex = (currentIndex - 1 + options.length) % options.length;
+      } else if (event.key === "Home") {
+        nextIndex = 0;
+      } else if (event.key === "End") {
+        nextIndex = options.length - 1;
+      }
+
+      if (nextIndex === null) return;
+      event.preventDefault();
+      selectOption(options[nextIndex], { moveFocus: true });
     });
   });
 

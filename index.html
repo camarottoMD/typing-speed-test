@@ -66,10 +66,12 @@
                   <span class="dropdown-trigger-label">Fácil</span>
                   <img src="./assets/images/icon-down-arrow.svg" alt="" aria-hidden="true" width="11" height="6">
                 </button>
+                <!-- Roving tabindex: só a opção marcada entra no fluxo do Tab;
+                     as demais só recebem foco via seta (ver app.js) -->
                 <div class="segmented" id="difficulty-options" role="radiogroup" aria-label="Dificuldade da passagem">
-                  <button type="button" class="segmented-option is-selected" data-difficulty="easy" role="radio" aria-checked="true">Fácil</button>
-                  <button type="button" class="segmented-option" data-difficulty="medium" role="radio" aria-checked="false">Médio</button>
-                  <button type="button" class="segmented-option" data-difficulty="hard" role="radio" aria-checked="false">Difícil</button>
+                  <button type="button" class="segmented-option is-selected" data-difficulty="easy" role="radio" aria-checked="true" tabindex="0">Fácil</button>
+                  <button type="button" class="segmented-option" data-difficulty="medium" role="radio" aria-checked="false" tabindex="-1">Médio</button>
+                  <button type="button" class="segmented-option" data-difficulty="hard" role="radio" aria-checked="false" tabindex="-1">Difícil</button>
                 </div>
               </div>
             </div>
@@ -82,8 +84,8 @@
                   <img src="./assets/images/icon-down-arrow.svg" alt="" aria-hidden="true" width="11" height="6">
                 </button>
                 <div class="segmented" id="mode-options" role="radiogroup" aria-label="Modo do teste">
-                  <button type="button" class="segmented-option is-selected" data-mode="timed" role="radio" aria-checked="true">Cronometrado (60s)</button>
-                  <button type="button" class="segmented-option" data-mode="passage" role="radio" aria-checked="false">Trecho livre</button>
+                  <button type="button" class="segmented-option is-selected" data-mode="timed" role="radio" aria-checked="true" tabindex="0">Cronometrado (60s)</button>
+                  <button type="button" class="segmented-option" data-mode="passage" role="radio" aria-checked="false" tabindex="-1">Trecho livre</button>
                 </div>
               </div>
             </div>

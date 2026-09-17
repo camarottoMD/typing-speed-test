@@ -70,6 +70,19 @@ img {
   max-width: 100%;
 }
 
+/* Some texto: fica disponível para leitores de tela sem ocupar espaço visual */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 button {
   font-family: inherit;
   cursor: pointer;
@@ -124,6 +137,10 @@ button {
 .personal-best strong {
   color: var(--neutral-0);
   font-weight: 700;
+}
+
+.personal-best-label-short {
+  display: none;
 }
 
 /* ---------- Barra de estatísticas + controles ---------- */
@@ -370,4 +387,85 @@ button {
 
 .attribution a {
   color: var(--blue-400);
+}
+
+/* ==========================================================================
+   Responsivo — mobile (referência: design/mobile-*.jpg, largura base 375px)
+   ========================================================================== */
+
+@media (max-width: 640px) {
+  .app {
+    padding: 1.5rem 1.25rem 2.5rem;
+  }
+
+  /* No mobile o design mostra só o ícone, sem título/subtítulo por extenso.
+     Mantemos o texto no DOM (visível a leitores de tela) para não perder contexto. */
+  .brand-text {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .personal-best-label-full {
+    display: none;
+  }
+
+  .personal-best-label-short {
+    display: inline;
+  }
+
+  .app-main {
+    margin-top: 1.5rem;
+  }
+
+  .stats-bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1.25rem;
+  }
+
+  .stats-live {
+    gap: 0.75rem;
+  }
+
+  .stat strong {
+    font-size: 1rem;
+  }
+
+  .stats-controls {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+
+  .control-group {
+    justify-content: space-between;
+  }
+
+  .segmented {
+    flex-wrap: wrap;
+  }
+
+  .passage-wrapper {
+    margin-top: 1.75rem;
+  }
+
+  .passage {
+    font-size: 1.375rem;
+  }
+
+  .results-cards {
+    gap: 0.75rem;
+  }
+
+  .results-card {
+    padding: 0.875rem 1rem;
+    min-width: 100px;
+  }
 }

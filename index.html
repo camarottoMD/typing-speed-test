@@ -27,7 +27,11 @@
 
       <p class="personal-best">
         <img src="./assets/images/icon-personal-best.svg" alt="" width="21" height="18">
-        Recorde pessoal: <strong id="personal-best-value">&ndash;&ndash; WPM</strong>
+        <!-- rótulo completo no desktop, versão curta no mobile (ambos no DOM para leitores de tela) -->
+        <span class="personal-best-label-full" aria-hidden="true">Recorde pessoal:</span>
+        <span class="personal-best-label-short" aria-hidden="true">Melhor:</span>
+        <span class="sr-only">Recorde pessoal:</span>
+        <strong id="personal-best-value">&ndash;&ndash; WPM</strong>
       </p>
     </header>
 

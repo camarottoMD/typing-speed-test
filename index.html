@@ -38,7 +38,11 @@
     <main class="app-main">
 
       <!-- Tela do teste: stats ao vivo, seletores e o trecho a ser digitado -->
-      <section class="test-screen" id="test-screen">
+      <section class="test-screen" id="test-screen" aria-labelledby="test-screen-title">
+
+        <!-- Título da seção só pra estrutura/leitores de tela — o design não
+             pede um heading visível aqui (a tela de resultados já tem o dela). -->
+        <h2 class="sr-only" id="test-screen-title">Teste de digitação</h2>
 
         <div class="stats-bar">
           <div class="stats-live">

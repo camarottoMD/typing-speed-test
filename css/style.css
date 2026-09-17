@@ -297,6 +297,18 @@ button {
   display: none;
 }
 
+.test-restart[hidden] {
+  display: none;
+}
+
+.test-restart {
+  display: flex;
+  justify-content: center;
+  margin-top: 2.5rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--neutral-800);
+}
+
 .start-overlay {
   position: absolute;
   inset: 0;
@@ -423,6 +435,12 @@ button {
   font-size: 2rem;
 }
 
+.results-title:focus {
+  /* Foco só serve pra jogar o cursor de leitor de tela pra cá — não é um
+     elemento interativo, então não precisa de anel visível */
+  outline: none;
+}
+
 .results-subtitle {
   margin: 0.5rem 0 0;
   color: var(--neutral-500);
@@ -460,6 +478,14 @@ button {
 }
 
 .results-card-accuracy.is-error {
+  color: var(--red-500);
+}
+
+.results-characters-correct {
+  color: var(--green-500);
+}
+
+.results-characters-incorrect {
   color: var(--red-500);
 }
 

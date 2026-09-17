@@ -22,8 +22,11 @@
   const resultsSubtitleEl = document.getElementById("results-subtitle");
   const resultsWpmEl = document.getElementById("results-wpm");
   const resultsAccuracyEl = document.getElementById("results-accuracy");
-  const resultsCharactersEl = document.getElementById("results-characters");
+  const resultsCharactersCorrectEl = document.getElementById("results-characters-correct");
+  const resultsCharactersIncorrectEl = document.getElementById("results-characters-incorrect");
   const restartButton = document.getElementById("restart-button");
+  const testRestart = document.getElementById("test-restart");
+  const testRestartButton = document.getElementById("test-restart-button");
   const personalBestValueEl = document.getElementById("personal-best-value");
 
   // ---------------------------------------------------------------------
@@ -290,16 +293,22 @@
     resultsAccuracyEl.textContent = `${accuracy}%`;
     resultsAccuracyEl.classList.toggle("is-perfect", accuracy === 100);
     resultsAccuracyEl.classList.toggle("is-error", accuracy < 100);
-    resultsCharactersEl.textContent = `${correctKeystrokes}/${incorrectKeystrokes}`;
+    resultsCharactersCorrectEl.textContent = String(correctKeystrokes);
+    resultsCharactersIncorrectEl.textContent = String(incorrectKeystrokes);
 
     testScreen.hidden = true;
     resultsScreen.hidden = false;
+    // Joga o foco pro heading: sem isso, quem navega por teclado/leitor de
+    // tela fica "preso" no input desabilitado sem saber que a tela mudou
+    resultsTitleEl.focus();
   }
 
   restartButton.addEventListener("click", () => {
     resultsScreen.hidden = true;
     testScreen.hidden = false;
-    showRandomPassage(getSelectedDifficulty()).catch((error) => console.error(error));
+    showRandomPassage(getSelectedDifficulty())
+      .then(() => startButton.focus()) // mesma lógica do foco nos resultados: guia quem usa teclado/leitor de tela
+      .catch((error) => console.error(error));
   });
 
   /** Zera tudo pra uma tentativa nova: contadores, cronômetro, tela bloqueada. */
@@ -332,17 +341,29 @@
   function lockPassage() {
     passageEl.classList.add("is-locked");
     startOverlay.hidden = false;
+    testRestart.hidden = true;
   }
 
   function unlockPassage(startImmediately) {
     passageEl.classList.remove("is-locked");
     startOverlay.hidden = true;
+    testRestart.hidden = false;
     typingInput.focus();
     if (startImmediately) startTest();
   }
 
   startButton.addEventListener("click", () => unlockPassage(true));
   passageEl.addEventListener("click", () => unlockPassage(false));
+
+  // "Reiniciar Teste" fica visível durante o teste (ver lockPassage/unlockPassage
+  // acima) e sorteia um novo trecho da mesma dificuldade, a qualquer momento.
+  // Diferente de trocar a dificuldade: aqui o trecho já vem desbloqueado e
+  // pronto pra digitar na hora, sem precisar clicar em "Iniciar" de novo.
+  testRestartButton.addEventListener("click", () => {
+    showRandomPassage(getSelectedDifficulty())
+      .then(() => unlockPassage(false))
+      .catch((error) => console.error(error));
+  });
 
   // A passagem é focável (tabindex="0"); Enter/Espaço reproduzem o comportamento de clique
   passageEl.addEventListener("keydown", (event) => {

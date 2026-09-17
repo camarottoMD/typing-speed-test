@@ -108,6 +108,14 @@
           >
         </div>
 
+        <!-- Só aparece depois que o teste começa (ver .is-locked em app.js) —
+             permite recomeçar a qualquer momento com um novo trecho sorteado. -->
+        <div class="test-restart" id="test-restart" hidden>
+          <button type="button" class="btn btn-secondary" id="test-restart-button">
+            Reiniciar Teste <img src="./assets/images/icon-restart.svg" alt="" width="20" height="20">
+          </button>
+        </div>
+
       </section>
 
       <!-- Tela de resultados: exibida ao final do teste, oculta por padrão.
@@ -121,7 +129,9 @@
 
         <img src="./assets/images/icon-completed.svg" alt="" width="64" height="64" class="results-icon" id="results-icon">
 
-        <h2 class="results-title" id="results-title">Teste Concluído!</h2>
+        <!-- tabindex="-1": não entra na navegação por Tab, só recebe foco
+             via JS quando a tela de resultados aparece (ver app.js) -->
+        <h2 class="results-title" id="results-title" tabindex="-1">Teste Concluído!</h2>
         <p class="results-subtitle" id="results-subtitle">Boa corrida. Continue tentando bater seu recorde.</p>
 
         <div class="results-cards">
@@ -135,7 +145,10 @@
           </div>
           <div class="results-card">
             <p class="results-card-label">Caracteres</p>
-            <p class="results-card-value" id="results-characters">0/0</p>
+            <p class="results-card-value">
+              <span id="results-characters-correct" class="results-characters-correct">0</span
+              >/<span id="results-characters-incorrect" class="results-characters-incorrect">0</span>
+            </p>
           </div>
         </div>
 

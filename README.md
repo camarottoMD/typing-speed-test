@@ -30,8 +30,9 @@ Um teste de velocidade de digitação rápido e sem dependências: escolha a dif
 - **Estatísticas ao vivo**: WPM, precisão e tempo, recalculados a cada instante
 - **Tela de resultados** com três variações de mensagem: primeiro teste ("Baseline Established!"), novo recorde ("High Score Smashed!", com confete) ou conclusão normal
 - **Recorde pessoal persistente** via `localStorage`, mantido entre sessões
+- **Reiniciar a qualquer momento**, mesmo no meio do teste, sorteando um novo trecho da mesma dificuldade
 - **Totalmente responsivo**: os seletores de dificuldade/modo viram dropdowns no mobile
-- **Suporte a teclado e leitor de tela** nos controles principais (veja [Acessibilidade](#acessibilidade))
+- **Suporte a teclado e leitor de tela** nos controles principais, incluindo gestão de foco nas trocas de tela (veja [Acessibilidade](#acessibilidade))
 
 ## Tecnologias
 
@@ -85,6 +86,7 @@ Algumas decisões que talvez não sejam óbvias só de olhar o resultado final:
 - Estados de foco visíveis (`:focus-visible`) em todos os elementos interativos
 - Passagem de texto focável e acionável por teclado (Enter/Espaço iniciam o teste, como um clique)
 - Dropdown mobile fecha com `Esc` e devolve o foco ao botão que o abriu
+- **Gestão de foco nas trocas de tela**: ao concluir o teste, o foco vai pro heading de resultados; ao clicar em "Repetir", volta pro botão "Iniciar Teste" — quem navega por teclado ou leitor de tela nunca fica "perdido" num elemento desabilitado
 
 ## Design
 

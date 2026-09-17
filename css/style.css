@@ -57,6 +57,10 @@
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-pill: 999px;
+
+  /* Só existe uma camada de sobreposição no layout (o menu do dropdown),
+     mas nomear a variável deixa claro o que o valor representa. */
+  --z-dropdown-menu: 20;
 }
 
 *,
@@ -66,7 +70,12 @@
 }
 
 /* Neutraliza toda transição/animação do site pra quem ativou "reduzir
-   movimento" no sistema, em vez de precisar tratar caso a caso */
+   movimento" no sistema, em vez de precisar tratar caso a caso.
+   !important é intencional aqui: a regra usa `*` de propósito pra pegar
+   qualquer animação/transição futura sem depender da especificidade de cada
+   uma — sem !important, um componente mais específico poderia sobrescrever
+   o reset e voltar a animar, quebrando a preferência de acessibilidade. */
+/* stylelint-disable declaration-no-important */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -77,6 +86,7 @@
     scroll-behavior: auto !important;
   }
 }
+/* stylelint-enable declaration-no-important */
 
 body {
   margin: 0;
@@ -95,8 +105,12 @@ img {
   max-inline-size: 100%;
 }
 
-/* Some texto: fica disponível para leitores de tela sem ocupar espaço visual */
-.sr-only {
+/* Some texto: fica disponível para leitores de tela sem ocupar espaço visual.
+   .brand-text usa a mesma técnica (por isso compartilha a regra) — ela só
+   difere por voltar a ficar visível a partir do breakpoint maior, ver
+   @media (min-width: 40em) no fim do arquivo. */
+.sr-only,
+.brand-text {
   position: absolute;
   width: 1px;
   height: 1px;
@@ -111,6 +125,15 @@ img {
 button {
   font-family: inherit;
   cursor: pointer;
+}
+
+/* Esses componentes têm um `display` próprio (flex) mais específico que o
+   `[hidden]` nativo (que só define display:none no user-agent stylesheet) —
+   sem isso, marcar `hidden` no HTML não escondia o elemento de fato. */
+.start-overlay[hidden],
+.test-restart[hidden],
+.results-screen[hidden] {
+  display: none;
 }
 
 .app {
@@ -142,18 +165,8 @@ button {
 
 /* No mobile o design mostra só o ícone, sem título/subtítulo por extenso.
    Mantemos o texto no DOM (visível a leitores de tela) para não perder
-   contexto — ver a reversão completa no bloco @media de telas maiores. */
-.brand-text {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
-}
+   contexto — ver a reversão completa no bloco @media de telas maiores.
+   (a regra de escondê-lo está compartilhada com .sr-only, acima) */
 
 .brand-title {
   font-size: 1.25rem;
@@ -235,8 +248,8 @@ button {
 }
 
 .divider {
-  width: 1px;
-  height: 1.25rem;
+  inline-size: 1px;
+  block-size: 1.25rem;
   background-color: var(--neutral-800);
 }
 
@@ -302,7 +315,7 @@ button {
   position: absolute;
   inset-block-start: calc(100% + 0.5rem);
   inset-inline: 0;
-  z-index: 20;
+  z-index: var(--z-dropdown-menu);
   flex-direction: column;
   gap: 0.125rem;
   background-color: var(--neutral-900);
@@ -339,7 +352,8 @@ button {
   color: var(--neutral-0);
 }
 
-.segmented-option:focus-visible {
+.segmented-option:focus-visible,
+.btn-secondary:focus-visible {
   outline: 2px solid var(--blue-400);
   outline-offset: 2px;
 }
@@ -349,8 +363,8 @@ button {
 .segmented-option::before {
   content: "";
   box-sizing: border-box;
-  width: 16px;
-  height: 16px;
+  inline-size: 16px;
+  block-size: 16px;
   flex-shrink: 0;
   border-radius: 50%;
   border: 1.5px solid var(--neutral-500);
@@ -405,14 +419,6 @@ button {
 .char.is-cursor {
   background-color: var(--neutral-800);
   border-radius: 2px;
-}
-
-.start-overlay[hidden] {
-  display: none;
-}
-
-.test-restart[hidden] {
-  display: none;
 }
 
 .test-restart {
@@ -487,16 +493,7 @@ button {
   background-color: var(--neutral-500);
 }
 
-.btn-secondary:focus-visible {
-  outline: 2px solid var(--blue-400);
-  outline-offset: 2px;
-}
-
 /* ---------- Tela de resultados ---------- */
-
-.results-screen[hidden] {
-  display: none;
-}
 
 .results-screen {
   position: relative;
@@ -516,15 +513,15 @@ button {
 .results-decoration-star-1 {
   inset-block-start: 1.5rem;
   inset-inline-start: 0.5rem;
-  width: 48px;
-  height: 48px;
+  inline-size: 48px;
+  block-size: 48px;
 }
 
 .results-decoration-star-2 {
   inset-block-end: 5rem;
   inset-inline-end: 1rem;
-  width: 24px;
-  height: 24px;
+  inline-size: 24px;
+  block-size: 24px;
 }
 
 /* O confete só aparece quando um recorde pessoal é batido */
@@ -532,8 +529,8 @@ button {
   display: none;
   inset-block-end: 0;
   inset-inline-start: 0;
-  width: 100%;
-  height: auto;
+  inline-size: 100%;
+  block-size: auto;
 }
 
 .results-screen.is-high-score .results-decoration-confetti {
@@ -546,7 +543,7 @@ button {
 }
 
 .results-title {
-  margin: 1.5rem 0 0;
+  margin-block-start: 1.5rem;
   font-size: 2rem;
 }
 
@@ -557,14 +554,14 @@ button {
 }
 
 .results-subtitle {
-  margin: 0.5rem 0 0;
+  margin-block-start: 0.5rem;
   color: var(--neutral-400);
 }
 
 .results-cards {
   display: flex;
   gap: clamp(0.75rem, calc(0.662rem + 0.376vw), 1rem);
-  margin: 2rem 0;
+  margin-block: 2rem;
   flex-wrap: wrap;
   justify-content: center;
 }
@@ -584,7 +581,7 @@ button {
 }
 
 .results-card-value {
-  margin: 0.25rem 0 0;
+  margin-block-start: 0.25rem;
   font-size: 1.5rem;
   font-weight: 700;
 }

@@ -15,6 +15,7 @@ Um teste de velocidade de digitação rápido e sem dependências: escolha a dif
 - [Como rodar localmente](#como-rodar-localmente)
 - [Estrutura do projeto](#estrutura-do-projeto)
 - [Detalhes de implementação](#detalhes-de-implementação)
+- [O que aprendi](#o-que-aprendi)
 - [Acessibilidade](#acessibilidade)
 - [Design](#design)
 - [Possíveis próximos passos](#possíveis-próximos-passos)
@@ -77,6 +78,15 @@ Algumas decisões que talvez não sejam óbvias só de olhar o resultado final:
 - **Precisão x correções**: os contadores de acerto/erro só crescem — nunca diminuem. Backspace tira a marcação visual do erro, mas ele continua contando na precisão final, como pedido no enunciado do desafio.
 - **Dropdown responsivo sem duplicar lógica**: os mesmos botões de dificuldade/modo servem tanto para as pills do desktop quanto para os itens do dropdown mobile — só o CSS muda a aparência conforme o breakpoint.
 - **Formato do cronômetro**: o modo cronometrado mostra `0:60 → 0:00` (não `1:00 → 0:00`), reproduzindo fielmente o mockup original em vez do formato `mm:ss` convencional.
+
+## O que aprendi
+
+Algumas coisas que só ficaram claras na prática, digitando código mesmo, não só lendo sobre o assunto:
+
+- **`clamp()`/`calc()` fluido não é só copiar a fórmula.** Pra fazer o espaçamento escalar continuamente entre 375px e 1440px eu precisei expressar `calc(A*1rem + B*1vw)`, e na primeira tentativa esqueci de converter px→rem no coeficiente de `vw` — o resultado *parecia* certo no olho, mas comparando screenshots do mobile antes/depois dava pra ver o espaçamento indo pro lugar errado perto dos 1440px. Só depois de refazer a conta (`slope * 1600` em vez de `slope * 100`) os valores bateram nos dois extremos.
+- **`pointer-events` em overlays é uma faca de dois gumes.** O `.start-overlay` cobre a passagem inteira antes do teste começar, mas a área vazia dele não podia bloquear o clique no texto atrás — só o botão "Iniciar". Resolvi com `pointer-events: none` no overlay e `pointer-events: auto` só no `.btn` dentro dele, mas até perceber o porquê do clique "sumir" no texto, gastei um tempo achando que era problema de z-index.
+- **Contraste de cor merece conta, não só o olho.** O `--neutral-500` (usado em vários textos secundários) *parecia* legível no fundo escuro, mas calculando a razão de contraste pela fórmula do WCAG (luminância relativa via sRGB linearizado) deu ~3.92:1 — abaixo dos 4.5:1 exigidos pra texto normal. Foi só rodando essa conta que o problema apareceu; visualmente eu tinha passado batido.
+- **Radiogroup de verdade precisa de "roving tabindex".** Antes, cada opção de dificuldade/modo era individualmente alcançável via Tab, o que não é como um grupo de rádio nativo se comporta. Implementar o padrão WAI-ARIA certo (só a opção marcada no fluxo do Tab, setas movendo e selecionando entre as demais) mudou como eu penso sobre "parece acessível" vs. "segue o padrão esperado por quem usa leitor de tela todo dia".
 
 ## Acessibilidade
 

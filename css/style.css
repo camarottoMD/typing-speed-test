@@ -113,6 +113,15 @@ button {
   cursor: pointer;
 }
 
+/* Esses componentes têm um `display` próprio (flex) mais específico que o
+   `[hidden]` nativo (que só define display:none no user-agent stylesheet) —
+   sem isso, marcar `hidden` no HTML não escondia o elemento de fato. */
+.start-overlay[hidden],
+.test-restart[hidden],
+.results-screen[hidden] {
+  display: none;
+}
+
 .app {
   max-inline-size: 1200px;
   margin-inline: auto;
@@ -407,14 +416,6 @@ button {
   border-radius: 2px;
 }
 
-.start-overlay[hidden] {
-  display: none;
-}
-
-.test-restart[hidden] {
-  display: none;
-}
-
 .test-restart {
   display: flex;
   justify-content: center;
@@ -493,10 +494,6 @@ button {
 }
 
 /* ---------- Tela de resultados ---------- */
-
-.results-screen[hidden] {
-  display: none;
-}
 
 .results-screen {
   position: relative;
